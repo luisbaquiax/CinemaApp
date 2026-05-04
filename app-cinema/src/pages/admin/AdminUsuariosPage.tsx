@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { authService } from '../../services/microservice-users/authService'
+import { useAuth } from '../../hooks/UseAuth';
 
 const roleColors: Record<string, { bg: string; color: string }> = {
   ROLE_ADMIN_SISTEMA: { bg: 'rgba(245,158,11,0.15)', color: '#fcd34d' },
@@ -16,11 +17,15 @@ const AdminUsuariosPage = () => {
   const [modalRol, setModalRol]         = useState<{ idUsuario: number; username: string } | null>(null)
   const [rolSeleccionado, setRolSeleccionado] = useState<number | null>(null)
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+  
+  const { auth } = useAuth();
 
-  const { data: usuarios = [], isLoading } = useQuery({
+  let { data: usuarios = [], isLoading } = useQuery({
     queryKey: ['admin-usuarios', filtroActivo, filtroRol],
     queryFn:  () => authService.getAllUsers(filtroActivo, filtroRol),
   })
+
+  usuarios = usuarios.filter(u => u.idUsuario !== auth?.idUsuario)
 
   const { data: roles = [] } = useQuery({
     queryKey: ['roles'],
@@ -79,7 +84,7 @@ const AdminUsuariosPage = () => {
           color: msg.type === 'ok' ? '#4ade80' : 'var(--accent2)',
           fontSize: '.82rem'
         }}>
-          {msg.type === 'ok' ? '✅' : '⚠️'} {msg.text}
+          {msg.type === 'ok' ? '' : '⚠️'} {msg.text}
         </div>
       )}
 

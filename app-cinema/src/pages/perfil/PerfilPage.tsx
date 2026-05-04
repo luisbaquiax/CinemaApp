@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../hooks/UseAuth'
 import { authService } from '../../services/microservice-users/authService'
@@ -29,7 +29,7 @@ const PerfilPage = () => {
     })
 
     // Sincronizar form cuando llega el perfil
-    useState(() => {
+    useEffect(() => {
         if (perfil) {
             setForm({
                 username: perfil.username,
@@ -41,11 +41,12 @@ const PerfilPage = () => {
                 dobleFactorAuth: perfil.dobleFactorAuth,
             })
         }
-    })
+    }, [perfil])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
+
 
     const updateMutation = useMutation({
         mutationFn: () => authService.updateProfile(auth!.idUsuario, form),
@@ -112,7 +113,7 @@ const PerfilPage = () => {
                     color: msg.type === 'ok' ? '#4ade80' : 'var(--accent2)',
                     fontSize: '.84rem'
                 }}>
-                    {msg.type === 'ok' ? '✅' : '⚠️'} {msg.text}
+                    {msg.type === 'ok' ? '' : '⚠️'} {msg.text}
                 </div>
             )}
 
@@ -148,12 +149,12 @@ const PerfilPage = () => {
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <InputGroup label="Nombres" name="nombres" value={perfil?.nombres ?? ''} onChange={handleChange} disabled={!editMode} />
-                    <InputGroup label="Apellidos" name="apellidos" value={perfil?.apellidos ?? ''} onChange={handleChange} disabled={!editMode} />
-                    <InputGroup label="Usuario" name="username" value={perfil?.username ?? ''} onChange={handleChange} disabled={!editMode} />
-                    <InputGroup label="Email" name="email" type="email" value={perfil?.email ?? ''} onChange={handleChange} disabled={!editMode} />
-                    <InputGroup label="Teléfono" name="telefono" value={perfil?.telefono ?? ''} onChange={handleChange} disabled={!editMode} />
-                    <InputGroup label="Fecha de nacimiento" name="fechaNacimiento" type="date" value={perfil?.fechaNacimiento ?? ''} onChange={handleChange} disabled={!editMode} />
+                    <InputGroup label="Nombres" name="nombres" value={form?.nombres ?? ''} onChange={handleChange} />
+                    <InputGroup label="Apellidos" name="apellidos" value={form?.apellidos ?? ''} onChange={handleChange} />
+                    <InputGroup label="Usuario" name="username" value={form?.username ?? ''} onChange={handleChange} />
+                    <InputGroup label="Email" name="email" type="email" value={form?.email ?? ''} onChange={handleChange} />
+                    <InputGroup label="Teléfono" name="telefono" value={form?.telefono ?? ''} onChange={handleChange} />
+                    <InputGroup label="Fecha de nacimiento" name="fechaNacimiento" type="date" value={form?.fechaNacimiento ?? ''} onChange={handleChange} />
                 </div>
 
                 {editMode && (
@@ -204,7 +205,7 @@ const PerfilPage = () => {
                         </div>
                         <div style={{ fontSize: '.75rem', color: '#94a3b8', marginTop: '.15rem' }}>
                             {perfil?.dobleFactorAuth
-                                ? '✅ Activa — recibirás un código por correo al iniciar sesión'
+                                ? ' Activa — recibirás un código por correo al iniciar sesión'
                                 : '⚠️ Inactiva — tu cuenta es más vulnerable'}
                         </div>
                     </div>

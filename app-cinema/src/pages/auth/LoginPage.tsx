@@ -102,7 +102,7 @@ const LoginPage = () => {
                 name="username"
                 value={form.username}
                 onChange={handleChange}
-                placeholder="tu_usuario"
+                placeholder="Nombre de usuario"
                 required
               />
               <InputGroup
