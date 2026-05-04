@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy: #0f172a;
+  --blue: #1e40af;
+  --blue-mid: #2563eb;
+  --blue-light: #3b82f6;
+  --blue-glow: #60a5fa;
+  --accent: #f59e0b;
+  --accent2: #ef4444;
+  --card-bg: rgba(30, 64, 175, 0.18);
+  --card-border: rgba(96, 165, 250, 0.18);
+}
+
+body {
+  background-color: var(--navy);
+  color: #f1f5f9;
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(37,99,235,0.35) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(30,64,175,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 55% 40%, rgba(96,165,250,0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scrollLeft {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.5s ease both;
+}
+
+.animate-scroll-left {
+  animation: scrollLeft 22s linear infinite;
+}
