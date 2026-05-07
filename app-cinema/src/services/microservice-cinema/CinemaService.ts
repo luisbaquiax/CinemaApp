@@ -19,6 +19,8 @@ import type {
 	PeliculaRequest,
 	PeliculaResponse,
 	TransaccionRequest,
+	CompaniaAdminRequest,
+	PeliculaPostersRequest,
 } from '../../types/CinemaCore.types'
 
 export const cinemaService = {
@@ -48,6 +50,11 @@ export const cinemaService = {
 		return data
 	},
 
+	getPostersByPelicula: async (idPelicula: number): Promise<string[]> => {
+		const { data } = await cinemaPublicClient.get(`/v1/cinema/peliculas/posters/${idPelicula}`)
+		return data
+	},
+
 	//ADMIN SISTEMA
 	// Categorías admin
 	createCategoria: async (payload: CategoriaRequest): Promise<CategoriaResponse> => {
@@ -68,6 +75,16 @@ export const cinemaService = {
 	// Compañías admin
 	createCompania: async (payload: CompaniaRequest): Promise<MessageSuccess> => {
 		const { data } = await cinemaPrivateClient.post('/v1/cinema/admin/companias', payload)
+		return data
+	},
+
+	agregarAdminACompania: async (payload: CompaniaAdminRequest): Promise<MessageSuccess> => {
+		const { data } = await cinemaPrivateClient.post(`/v1/cinema/admin/companias/admins`, payload)
+		return data
+	},
+
+	quitarAdminDeCompania: async (payload: CompaniaAdminRequest): Promise<MessageSuccess> => {
+		const { data } = await cinemaPrivateClient.delete(`/v1/cinema/admin/companias/admins`, { data: payload })
 		return data
 	},
 
@@ -165,6 +182,16 @@ export const cinemaService = {
 		const { data } = await cinemaPrivateClient.delete(`/v1/cinema/admin/peliculas/actores/${idPelicula}`, {
 			params: { idActor },
 		})
+		return data
+	},
+
+	agregarPosterPelicula: async (poster:PeliculaPostersRequest): Promise<MessageSuccess> => {
+		const formData = new FormData()
+		formData.append('archivo', poster.archivo)
+		formData.append('idPelicula', String(poster.idPelicula))
+		formData.append('esPrincipal', String(poster.esPrincipal))
+
+		const { data } = await cinemaPrivateClient.post(`/v1/cinema/admin/peliculas/posters`, formData)
 		return data
 	},
 

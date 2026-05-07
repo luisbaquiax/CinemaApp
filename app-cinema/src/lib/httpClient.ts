@@ -12,7 +12,7 @@ const createPublicClient = (baseURL: string) => {
 const createPrivateClient = (baseURL: string) => {
   const client = axios.create({
     baseURL,
-    headers: { "Content-Type": "application/json" },
+    //headers: { "Content-Type": "application/json" },
   })
 
   client.interceptors.request.use((config) => {

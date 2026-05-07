@@ -1,4 +1,6 @@
 export interface ActorResponse {
+  idPelicula: number;
+  idPeliculaCast: number;
   actor: string;
   personaje: string;
 }
@@ -32,7 +34,7 @@ export interface CategoriaResponse {
   nombre: string;
 }
 
-// Cartera (nested)
+// Cartera
 export interface CarteraCineRequest {
   idCompania: number;
   saldo: number;
@@ -120,11 +122,12 @@ export interface CompaniaResponse {
   logoUrl?: string;
   activo: boolean;
   createdAt: string;
+  costoActual: number;
 }
 
 export interface CompaniaUpdateRequest {
-  nombreCompania?: string;
-  descripcionCompania?: string;
+  nombreCompania: string;
+  descripcionCompania: string | undefined;
 }
 
 
@@ -184,7 +187,6 @@ export interface FuncionResponse {
 // Películas
 export interface PeliculaRequest {
   titulo: string;
-  portadaUrl?: string;
   sinopsis?: string;
   duracionMin: number;
   director?: string;
