@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { InputGroup } from '../../components/inputs/InputGroup'
 import { useAuth } from '../../hooks/UseAuth'
 import { authService } from '../../services/microservice-users/authService'
-import VerifyModal from '../../components/modals/VerifyModal'
+import VerifyModal from '../../components/modal/VerifyModal'
 
 const LoginPage = () => {
   const navigate  = useNavigate()

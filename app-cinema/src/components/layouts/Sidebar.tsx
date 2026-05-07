@@ -1,52 +1,274 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'
 import {
-    User,
-    LogOut,
-} from 'lucide-react';
-import { useAuth } from '../../hooks/UseAuth';
+  LayoutDashboard, Film, Users, Building2,
+  Wallet, Megaphone, Ticket, BarChart3,
+  Armchair, Clock, DollarSign, User, ChevronLeft, ChevronRight
+} from 'lucide-react'
+import { useAuth } from '../../hooks/UseAuth'
+import { useState, useEffect } from 'react'
+
+interface NavItem {
+  label: string
+  path: string
+  icon: React.ReactNode
+}
+
+interface NavSection {
+  title: string
+  items: NavItem[]
+}
+
+const roleNavConfig: Record<string, NavSection[]> = {
+  ROLE_ADMIN_SISTEMA: [
+    {
+      title: 'General',
+      items: [
+        { label: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={16} /> },
+      ]
+    },
+    {
+      title: 'Gestión',
+      items: [
+        { label: 'Usuarios', path: '/admin/usuarios', icon: <Users size={16} /> },
+        { label: 'Compañías', path: '/admin/companias', icon: <Building2 size={16} /> },
+        { label: 'Películas', path: '/admin/peliculas', icon: <Film size={16} /> },
+        { label: 'Categorías', path: '/admin/categorias', icon: <Film size={16} /> },
+      ]
+    },
+    {
+      title: 'Configuración',
+      items: [
+        { label: 'Costo Global', path: '/admin/costo-global', icon: <DollarSign size={16} /> },
+      ]
+    },
+    {
+      title: 'Analítica',
+      items: [
+        { label: 'Reportes', path: '/admin/reportes', icon: <BarChart3 size={16} /> },
+      ]
+    }
+  ],
+
+  ROLE_ADMIN_CINE: [
+    {
+      title: 'General',
+      items: [
+        { label: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={16} /> },
+      ]
+    },
+    {
+      title: 'Operación',
+      items: [
+        { label: 'Mis Compañías', path: '/cine/companias', icon: <Building2 size={16} /> },
+        { label: 'Salas', path: '/cine/salas', icon: <Armchair size={16} /> },
+        { label: 'Funciones', path: '/cine/funciones', icon: <Clock size={16} /> },
+      ]
+    },
+    {
+      title: 'Finanzas',
+      items: [
+        { label: 'Cartera', path: '/cine/cartera', icon: <Wallet size={16} /> },
+      ]
+    },
+    {
+      title: 'Analítica',
+      items: [
+        { label: 'Reportes', path: '/cine/reportes', icon: <BarChart3 size={16} /> },
+      ]
+    }
+  ],
+
+  ROLE_ANUNCIANTE: [
+    {
+      title: 'General',
+      items: [
+        { label: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={16} /> },
+      ]
+    },
+    {
+      title: 'Publicidad',
+      items: [
+        { label: 'Mis Anuncios', path: '/anunciante/anuncios', icon: <Megaphone size={16} /> },
+      ]
+    },
+    {
+      title: 'Finanzas',
+      items: [
+        { label: 'Cartera', path: '/anunciante/cartera', icon: <Wallet size={16} /> },
+      ]
+    }
+  ],
+
+  ROLE_USUARIO: [
+    {
+      title: 'General',
+      items: [
+        { label: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={16} /> },
+      ]
+    },
+    {
+      title: 'Actividad',
+      items: [
+        { label: 'Mis Boletos', path: '/mis-boletos', icon: <Ticket size={16} /> },
+      ]
+    },
+    {
+      title: 'Finanzas',
+      items: [
+        { label: 'Cartera personal', path: '/cartera', icon: <Wallet size={16} /> },
+      ]
+    }
+  ]
+}
 
 export default function Sidebar() {
+  const { auth } = useAuth()
+  const location = useLocation()
 
-    const { auth, logout } = useAuth();
+  //estado colapsado persistente
+  const [collapsed, setCollapsed] = useState(() => {
+    return localStorage.getItem('sidebar-collapsed') === 'true'
+  })
 
-    const navigate = useNavigate();
+  useEffect(() => {
+    localStorage.setItem('sidebar-collapsed', String(collapsed))
+  }, [collapsed])
 
-    const handleLogout = () => {
-        logout();
-        navigate('/');
-    }
+  //construir secciones combinadas
+  const sections: NavSection[] = []
+  const seen = new Set<string>()
 
-    return (
-        <div className="w-64 min-h-screen bg-white border-r border-slate-200 flex flex-col font-sans shadow-sm">
+  auth?.roles?.forEach(role => {
+    roleNavConfig[role]?.forEach(section => {
+      const existing = sections.find(s => s.title === section.title)
 
-            {/* Usuario y Ajustes */}
-            <div className="p-4 border-t border-slate-200 bg-slate-50">
-                <nav className="flex flex-col gap-1">
+      if (existing) {
+        section.items.forEach(item => {
+          if (!seen.has(item.path)) {
+            seen.add(item.path)
+            existing.items.push(item)
+          }
+        })
+      } else {
+        const items = section.items.filter(i => {
+          if (seen.has(i.path)) return false
+          seen.add(i.path)
+          return true
+        })
+        if (items.length > 0) {
+          sections.push({ title: section.title, items })
+        }
+      }
+    })
+  })
 
-                    <Link
-                        to="/perfil"
-                        className="flex items-center gap-3 px-3 py-2.5 text-slate-700 rounded-xl hover:bg-white hover:shadow-sm transition-all border border-transparent hover:border-slate-200"
-                    >
-                        <div className="w-7 h-7 bg-purple-200 text-purple-700 rounded-full flex items-center justify-center">
-                            <User size={14} />
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="font-semibold text-sm leading-tight">Mi Perfil</span>
-                            <span className="text-[10px] text-slate-500">Ajustes de cuenta</span>
-                        </div>
-                    </Link>
+  return (
+    <div style={{
+      width: collapsed ? '72px' : '240px',
+      transition: 'width .2s',
+      minHeight: '100vh',
+      background: 'rgba(15,23,42,0.95)',
+      borderRight: '1px solid rgba(96,165,250,0.1)',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
 
-                    <button
-                        className="flex items-center gap-3 px-3 py-2.5 text-red-600 rounded-xl hover:bg-red-50 transition-colors w-full text-left mt-2 group"
-                        onClick={handleLogout}
-                    >
-                        <LogOut size={20} className="text-red-400 group-hover:text-red-600 transition-colors" />
-                        <span className="font-semibold text-sm">Cerrar Sesión</span>
-                    </button>
+      {/* HEADER */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: collapsed ? 'center' : 'space-between',
+        padding: '1rem'
+      }}>
+        {!collapsed && (
+          <span style={{
+            fontFamily: "'Bebas Neue', sans-serif",
+            color: 'var(--blue-glow)',
+            fontSize: '1.4rem'
+          }}>
+            🎬 CINE MAX
+          </span>
+        )}
 
-                </nav>
-            </div>
+        <button
+          onClick={() => setCollapsed(p => !p)}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            color: '#94a3b8'
+          }}
+        >
+          {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+        </button>
+      </div>
 
-        </div>
-    );
+      {/* NAV */}
+      <nav style={{ flex: 1, padding: '.5rem' }}>
+        {sections.map(section => (
+          <div key={section.title} style={{ marginBottom: '1rem' }}>
+
+            {!collapsed && (
+              <div style={{
+                fontSize: '.65rem',
+                color: '#64748b',
+                textTransform: 'uppercase',
+                padding: '0 .6rem',
+                marginBottom: '.3rem'
+              }}>
+                {section.title}
+              </div>
+            )}
+
+            {section.items.map(item => {
+              const isActive = location.pathname.startsWith(item.path)
+
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  title={collapsed ? item.label : ''}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: collapsed ? 'center' : 'flex-start',
+                    gap: '.6rem',
+                    padding: '.6rem',
+                    borderRadius: '10px',
+                    marginBottom: '.2rem',
+                    textDecoration: 'none',
+                    background: isActive ? 'rgba(37,99,235,0.25)' : 'transparent',
+                    color: isActive ? 'var(--blue-glow)' : '#94a3b8'
+                  }}
+                >
+                  {item.icon}
+                  {!collapsed && item.label}
+                </Link>
+              )
+            })}
+          </div>
+        ))}
+      </nav>
+
+      {/* FOOTER */}
+      <div style={{ padding: '.5rem' }}>
+        <Link
+          to="/perfil"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            gap: '.6rem',
+            padding: '.6rem',
+            borderRadius: '10px',
+            textDecoration: 'none',
+            color: '#94a3b8'
+          }}
+        >
+          <User size={16} />
+          {!collapsed && 'Mi Perfil'}
+        </Link>
+      </div>
+    </div>
+  )
 }

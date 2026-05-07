@@ -11,6 +11,7 @@ interface InputGroupProps {
   maxValue?: number
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
   onkeyUpCapture?: (e: React.KeyboardEvent<HTMLInputElement>) => void
+  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
   placeholder?: string
   className?: string
   disabled?: boolean
@@ -31,6 +32,7 @@ export const InputGroup: React.FC<InputGroupProps> = ({
   maxValue,
   onChange,
   onkeyUpCapture,
+  onBlur,
   placeholder = '',
   className = '',
   disabled = false,
@@ -72,6 +74,7 @@ export const InputGroup: React.FC<InputGroupProps> = ({
         e.currentTarget.style.boxShadow = '0 0 0 3px rgba(96,165,250,0.12)'
       }}
       onBlur={e => {
+        onBlur?.(e)
         e.currentTarget.style.border = `1px solid ${error ? 'var(--accent2)' : 'rgba(96,165,250,0.2)'}`
         e.currentTarget.style.boxShadow = 'none'
       }}
