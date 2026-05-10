@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import ConfirmModal from '../../components/modal/ConfirmModal'
+import { InputGroup } from '../../components/inputs/InputGroup'
 import { useAuth } from '../../hooks/UseAuth'
 import { cinemaAdminCineService } from '../../services/microservice-cinema/CinemaAdminCineService'
 import { cinemaService } from '../../services/microservice-cinema/CinemaService'
@@ -265,11 +266,23 @@ const FuncionesPage = () => {
                                 {peliculasActivas.map(p => <option key={p.idPelicula} value={p.idPelicula}>{p.titulo}</option>)}
                             </select>
 
-                            <input type="datetime-local" value={createForm.fechaHoraInicio} onChange={e => setCreateForm(prev => ({ ...prev, fechaHoraInicio: e.target.value }))}
-                                style={{ padding: '.6rem .7rem', borderRadius: '8px', border: '1px solid rgba(96,165,250,0.2)', background: 'rgba(15,23,42,0.6)', color: '#f1f5f9' }} />
+                            <InputGroup
+                                label="Fecha y hora inicio"
+                                type="datetime-local"
+                                value={createForm.fechaHoraInicio}
+                                onChange={e => setCreateForm(prev => ({ ...prev, fechaHoraInicio: e.target.value }))}
+                                required
+                            />
 
-                            <input type="number" min={0} step="0.01" placeholder="Precio" value={createForm.precio} onChange={e => setCreateForm(prev => ({ ...prev, precio: e.target.value }))}
-                                style={{ padding: '.6rem .7rem', borderRadius: '8px', border: '1px solid rgba(96,165,250,0.2)', background: 'rgba(15,23,42,0.6)', color: '#f1f5f9' }} />
+                            <InputGroup
+                                label="Precio"
+                                type="number"
+                                minValue={0}
+                                value={createForm.precio}
+                                onChange={e => setCreateForm(prev => ({ ...prev, precio: e.target.value }))}
+                                placeholder="Precio"
+                                required
+                            />
 
                             <button
                                 onClick={submitCreate}
@@ -289,11 +302,23 @@ const FuncionesPage = () => {
                                 {peliculasActivas.map(p => <option key={p.idPelicula} value={p.idPelicula}>{p.titulo}</option>)}
                             </select>
 
-                            <input type="datetime-local" value={updateForm.fechaHoraInicio} onChange={e => setUpdateForm(prev => ({ ...prev, fechaHoraInicio: e.target.value }))}
-                                style={{ padding: '.6rem .7rem', borderRadius: '8px', border: '1px solid rgba(96,165,250,0.2)', background: 'rgba(15,23,42,0.6)', color: '#f1f5f9' }} />
+                            <InputGroup
+                                label="Fecha y hora inicio"
+                                type="datetime-local"
+                                value={updateForm.fechaHoraInicio}
+                                onChange={e => setUpdateForm(prev => ({ ...prev, fechaHoraInicio: e.target.value }))}
+                                required
+                            />
 
-                            <input type="number" min={0} step="0.01" placeholder="Precio" value={updateForm.precio} onChange={e => setUpdateForm(prev => ({ ...prev, precio: e.target.value }))}
-                                style={{ padding: '.6rem .7rem', borderRadius: '8px', border: '1px solid rgba(96,165,250,0.2)', background: 'rgba(15,23,42,0.6)', color: '#f1f5f9' }} />
+                            <InputGroup
+                                label="Precio"
+                                type="number"
+                                minValue={0}
+                                value={updateForm.precio}
+                                onChange={e => setUpdateForm(prev => ({ ...prev, precio: e.target.value }))}
+                                placeholder="Precio"
+                                required
+                            />
 
                             <label style={{ color: '#cbd5e1', fontSize: '.82rem' }}>
                                 <input type="checkbox" checked={updateForm.activo} onChange={e => setUpdateForm(prev => ({ ...prev, activo: e.target.checked }))} style={{ marginRight: '.4rem' }} />

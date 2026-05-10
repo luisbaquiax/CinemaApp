@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { InputGroup } from '../../components/inputs/InputGroup'
 import { useAuth } from '../../hooks/UseAuth'
 import { cinemaAdminCineService } from '../../services/microservice-cinema/CinemaAdminCineService'
 import type { CompaniaResponse } from '../../types/CinemaCore.types'
@@ -89,14 +90,14 @@ const CarteraCinePage = () => {
                 <section style={{ border: '1px solid rgba(96,165,250,0.15)', borderRadius: '12px', padding: '1rem', background: 'rgba(30,64,175,0.1)' }}>
                     <h3 style={{ color: '#f1f5f9', marginBottom: '.8rem' }}>Nueva transacción</h3>
                     <div style={{ display: 'grid', gap: '.6rem' }}>
-                        <input
+                        <InputGroup
+                            label="Monto"
                             type="number"
-                            min={0.01}
-                            step="0.01"
-                            placeholder="Monto"
+                            minValue={0.01}
                             value={monto}
                             onChange={e => setMonto(e.target.value)}
-                            style={{ padding: '.6rem .7rem', borderRadius: '8px', border: '1px solid rgba(96,165,250,0.2)', background: 'rgba(15,23,42,0.6)', color: '#f1f5f9' }}
+                            placeholder="Monto"
+                            required
                         />
                         <label style={{ color: '#cbd5e1', fontSize: '.82rem' }}>
                             <input type="checkbox" checked={agregarFondos} onChange={e => setAgregarFondos(e.target.checked)} style={{ marginRight: '.4rem' }} />

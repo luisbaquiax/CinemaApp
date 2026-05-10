@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import ConfirmModal from '../../components/modal/ConfirmModal'
+import { InputGroup } from '../../components/inputs/InputGroup'
 import { useAuth } from '../../hooks/UseAuth'
 import { cinemaAdminCineService } from '../../services/microservice-cinema/CinemaAdminCineService'
 import type { CompaniaResponse, SalaRequest, SalaResponse } from '../../types/CinemaCore.types'
@@ -225,12 +226,33 @@ const SalasPage = () => {
                 <section style={{ border: '1px solid rgba(96,165,250,0.15)', borderRadius: '12px', padding: '1rem', background: 'rgba(30,64,175,0.1)' }}>
                     <h3 style={{ color: '#f1f5f9', marginBottom: '.8rem' }}>{editingSala ? 'Editar sala' : 'Crear sala'}</h3>
                     <div style={{ display: 'grid', gap: '.6rem' }}>
-                        <input placeholder="Nombre" value={form.nombre} onChange={e => setForm(prev => ({ ...prev, nombre: e.target.value }))}
-                            style={{ padding: '.6rem .7rem', borderRadius: '8px', border: '1px solid rgba(96,165,250,0.2)', background: 'rgba(15,23,42,0.6)', color: '#f1f5f9' }} />
-                        <input placeholder="Filas" type="number" min={1} value={form.filas} onChange={e => setForm(prev => ({ ...prev, filas: e.target.value }))}
-                            style={{ padding: '.6rem .7rem', borderRadius: '8px', border: '1px solid rgba(96,165,250,0.2)', background: 'rgba(15,23,42,0.6)', color: '#f1f5f9' }} />
-                        <input placeholder="Columnas" type="number" min={1} value={form.columnas} onChange={e => setForm(prev => ({ ...prev, columnas: e.target.value }))}
-                            style={{ padding: '.6rem .7rem', borderRadius: '8px', border: '1px solid rgba(96,165,250,0.2)', background: 'rgba(15,23,42,0.6)', color: '#f1f5f9' }} />
+                        <InputGroup
+                            label="Nombre"
+                            value={form.nombre}
+                            onChange={e => setForm(prev => ({ ...prev, nombre: e.target.value }))}
+                            placeholder="Nombre"
+                            required
+                        />
+                        <InputGroup
+                            label="Filas"
+                            type="number"
+                            value={form.filas}
+                            onChange={e => setForm(prev => ({ ...prev, filas: e.target.value }))}
+                            minValue={1}
+                            maxValue={26}
+                            placeholder="Filas"
+                            required
+                        />
+                        <InputGroup
+                            label="Columnas"
+                            type="number"
+                            value={form.columnas}
+                            onChange={e => setForm(prev => ({ ...prev, columnas: e.target.value }))}
+                            minValue={1}
+                            maxValue={40}
+                            placeholder="Columnas"
+                            required
+                        />
 
                         <label style={{ color: '#cbd5e1', fontSize: '.82rem' }}>
                             <input type="checkbox" checked={form.visible} onChange={e => setForm(prev => ({ ...prev, visible: e.target.checked }))} style={{ marginRight: '.4rem' }} />
