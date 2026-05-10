@@ -4,7 +4,6 @@ import type {
 	CategoriaRequest,
 	CategoriaResponse,
 	ClasificacionResponse,
-	CarteraCineResponse,
 	CompaniaAdminResponse,
 	CompaniaCostoUpdateRequest,
 	CompaniaRequest,
@@ -18,9 +17,9 @@ import type {
 	PeliculaCastRequest,
 	PeliculaRequest,
 	PeliculaResponse,
-	TransaccionRequest,
 	CompaniaAdminRequest,
 	PeliculaPostersRequest,
+	PeliculaPostersResponse,
 } from '../../types/CinemaCore.types'
 
 export const cinemaService = {
@@ -50,7 +49,7 @@ export const cinemaService = {
 		return data
 	},
 
-	getPostersByPelicula: async (idPelicula: number): Promise<string[]> => {
+	getPostersByPelicula: async (idPelicula: number): Promise<PeliculaPostersResponse[]> => {
 		const { data } = await cinemaPublicClient.get(`/v1/cinema/peliculas/posters/${idPelicula}`)
 		return data
 	},
@@ -195,20 +194,17 @@ export const cinemaService = {
 		return data
 	},
 
-	// Funciones del admin cine
-	getMisCompanias: async (idUsuario: number): Promise<CompaniaResponse[]> => {
-		const { data } = await cinemaPrivateClient.get(`/v1/cinema/admin-cine/companias/${idUsuario}`)
+
+	removePosterFromPelicula: async (idPoster: number): Promise<MessageSuccess> => {
+		const { data } = await cinemaPrivateClient.delete(`/v1/cinema/admin/peliculas/posters/${idPoster}`)
 		return data
 	},
 
-	// Wallet admin cine
-	addRemoveFunds: async (idCompania: number, payload: TransaccionRequest): Promise<MessageSuccess> => {
-		const { data } = await cinemaPrivateClient.post(`/v1/cinema/admin-cine/wallet/${idCompania}/transacciones`, payload)
+	setMainPosterPelicula: async (idPelicula: number, idPoster: number): Promise<MessageSuccess> => {
+		const { data } = await cinemaPrivateClient.patch('/v1/cinema/admin/peliculas/posters/principal', null, {
+			params: { idPelicula, idPoster },
+		})
 		return data
 	},
 
-	getCarteraByCompania: async (idCompania: number): Promise<CarteraCineResponse> => {
-		const { data } = await cinemaPrivateClient.get(`/v1/cinema/admin-cine/wallet/${idCompania}`)
-		return data
-	},
 }

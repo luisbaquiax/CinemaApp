@@ -26,6 +26,7 @@ import AdminCompaniasPage   from "../pages/admin/AdminCompaniasPage"
 import AdminCategoriasPage  from "../pages/admin/AdminCategoriasPage"
 import AdminCostoGlobalPage from "../pages/admin/AdminCostoGlobalPage"
 import AdminPeliculasPage from "../pages/admin/AdminPeliculasPage"
+import AdminPeliculaPostersPage from "../pages/admin/AdminPeliculaPostersPage"
 import MisCompaniasPage from "../pages/admin-cine/MisCompaniasPage"
 import CompaniaDetallePage from "../pages/admin-cine/CompaniaDetallePage"
 import CompaniaAdminsPage from "../pages/admin-cine/CompaniaAdminsPage"
@@ -43,11 +44,11 @@ export default function AppRouter() {
     <BrowserRouter>
       <Routes>
 
-        {/* ── Públicas sin layout ── */}
+        {/* Públicas sin layout */}
         <Route path="/reset-password"         element={<ResetPasswordPage />} />
         <Route path="/reset-password/confirm" element={<ConfirmResetPasswordPage />} />
 
-        {/* ── Layout público (Navbar + anuncios) ── */}
+        {/* Layout público (Navbar + anuncios) */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/peliculas" element={<PeliculasPage />} />
@@ -55,7 +56,7 @@ export default function AppRouter() {
           <Route path="/peliculas/:id/cines" element={<PeliculaCinesPage />} />
         </Route>
 
-        {/* ── Auth sin layout (pantallas limpias) ── */}
+        {/* Auth sin layout (pantallas limpias) */}
         <Route path="/login" element={
           isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />
         } />
@@ -63,7 +64,7 @@ export default function AppRouter() {
           isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />
         } />
 
-        {/* ── Privadas: cualquier autenticado ── */}
+        {/* Privadas: cualquier autenticado */}
         <Route element={<ProtectedRoute />}>
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<div>Dashboard</div>} />
@@ -72,7 +73,7 @@ export default function AppRouter() {
           </Route>
         </Route>
 
-        {/* ── ADMIN_SISTEMA ── */}
+        {/* ADMIN_SISTEMA */}
         <Route element={<ProtectedRoute rolesPermitidos={["ROLE_ADMIN_SISTEMA"]} />}>
           <Route element={<DashboardLayout />}>
             <Route path="/admin/usuarios"     element={<AdminUsuariosPage />} />
@@ -80,12 +81,13 @@ export default function AppRouter() {
             <Route path="/admin/companias/:id/admins" element={<CompaniaAdminsPage />} />
             <Route path="/admin/categorias"   element={<AdminCategoriasPage />} />
             <Route path="/admin/peliculas"    element={<AdminPeliculasPage />} />
+            <Route path="/admin/peliculas/:id/posters" element={<AdminPeliculaPostersPage />} />
             <Route path="/admin/costo-global" element={<AdminCostoGlobalPage />} />
             <Route path="/admin/reportes"     element={<div>Admin Reportes</div>} />
           </Route>
         </Route>
 
-        {/* ── ADMIN_CINE ── */}
+        {/* ADMIN_CINE */}
         <Route element={<ProtectedRoute rolesPermitidos={["ROLE_ADMIN_CINE"]} />}>
           <Route element={<DashboardLayout />}>
             <Route path="/cine/companias"     element={<MisCompaniasPage />} />
@@ -97,7 +99,7 @@ export default function AppRouter() {
           </Route>
         </Route>
 
-        {/* ── ANUNCIANTE ── */}
+        {/* ANUNCIANTE */}
         <Route element={<ProtectedRoute rolesPermitidos={["ROLE_ANUNCIANTE"]} />}>
           <Route element={<DashboardLayout />}>
             <Route path="/anunciante/anuncios" element={<div>Mis Anuncios</div>} />
@@ -105,14 +107,14 @@ export default function AppRouter() {
           </Route>
         </Route>
 
-        {/* ── USUARIO COMÚN ── */}
+        {/* USUARIO COMÚN */}
         <Route element={<ProtectedRoute rolesPermitidos={["ROLE_USUARIO"]} />}>
           <Route element={<DashboardLayout />}>
             <Route path="/mis-boletos" element={<div>Mis Boletos</div>} />
           </Route>
         </Route>
 
-        {/* ── USUARIO COMÚN en vista pública (con layout público) ── */}
+        {/* USUARIO COMÚN en vista pública (con layout público) */}
         <Route element={<ProtectedRoute rolesPermitidos={["ROLE_USUARIO"]} />}>
           <Route element={<PublicLayout />}>
             <Route path="/peliculas/:id/cines" element={<div>Cines de Película</div>} />

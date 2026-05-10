@@ -45,8 +45,7 @@ const HomePage = () => {
     })
 
     const handleVerCines = (movieId: number) => {
-        // TODO: navegar a detalle de cines cuando MS2 esté listo
-        navigate(`/peliculas/${movieId}/cines`)
+        navigate(`/peliculas/${movieId}`)
     }
 
     return (

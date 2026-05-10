@@ -1,6 +1,6 @@
 import axios from "axios"
 
-// Cliente SIN token — para endpoints públicos
+// Cliente SIN TOKEN, para endpoints públicos
 const createPublicClient = (baseURL: string) => {
   return axios.create({
     baseURL,
@@ -8,7 +8,7 @@ const createPublicClient = (baseURL: string) => {
   })
 }
 
-// Cliente CON token — para endpoints protegidos
+// Cliente CON TOKEN, para endpoints protegidos
 const createPrivateClient = (baseURL: string) => {
   const client = axios.create({
     baseURL,

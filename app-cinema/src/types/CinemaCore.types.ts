@@ -99,6 +99,7 @@ export interface ComentarioSalaResponse {
 export interface CompaniaAdminRequest {
   idCompania: number;
   idUsuario: number;
+  token: string;
 }
 
 export interface CompaniaAdminResponse {
@@ -111,7 +112,7 @@ export interface CompaniaAdminResponse {
 export interface CompaniaRequest {
   nombreCompania: string;
   descripcionCompania?: string;
-  createdAt?: string;
+  createdAt: string;
   idUsuarioAdmin?: number;
 }
 

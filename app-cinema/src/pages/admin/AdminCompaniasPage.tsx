@@ -8,6 +8,7 @@ import { authService } from '../../services/microservice-users/authService'
 import { InputGroup } from '../../components/inputs/InputGroup'
 import type { CompaniaRequest, CompaniaCostoUpdateRequest, CompaniaUpdateRequest } from '../../types/CinemaCore.types'
 import type { UsuarioComunResponse } from '../../types/Usuario.type'
+import { useAuth } from '../../hooks/UseAuth'
 
 type ModalType = 'crear' | 'costo' | 'editar' | null
 type CompanyAdminsModalMode = 'view' | 'add'
@@ -28,8 +29,10 @@ const AdminCompaniasPage = () => {
   const [companyAdminsCompanyId, setCompanyAdminsCompanyId] = useState<number | null>(null)
   const [pendingConfirmAction, setPendingConfirmAction] = useState<PendingConfirmAction | null>(null)
 
+  const auth = useAuth()
+
   const [form, setForm] = useState<CompaniaRequest>({
-    nombreCompania: '', descripcionCompania: '', idUsuarioAdmin: 0
+    nombreCompania: '', descripcionCompania: '', idUsuarioAdmin: 0, createdAt: '',
   })
   const [costoForm, setCostoForm] = useState<CompaniaCostoUpdateRequest>({
     idCompania: 0, nuevoCosto: 0, fechaCambio: '',
@@ -81,7 +84,7 @@ const AdminCompaniasPage = () => {
   const addAdminMutation = useMutation({
     mutationFn: (idUsuario: number) => {
       if (!companyAdminsCompanyId) throw new Error('Selecciona una compañía primero.')
-      return cinemaService.agregarAdminACompania({ idCompania: companyAdminsCompanyId, idUsuario })
+      return cinemaService.agregarAdminACompania({ idCompania: companyAdminsCompanyId, idUsuario, token: auth.auth?.token! })
     },
     onSuccess: () => {
       setMsg({ type: 'ok', text: 'Administrador agregado correctamente.' })
@@ -98,7 +101,7 @@ const AdminCompaniasPage = () => {
   const removeAdminMutation = useMutation({
     mutationFn: (idUsuario: number) => {
       if (!companyAdminsCompanyId) throw new Error('Selecciona una compañía primero.')
-      return cinemaService.quitarAdminDeCompania({ idCompania: companyAdminsCompanyId, idUsuario })
+      return cinemaService.quitarAdminDeCompania({ idCompania: companyAdminsCompanyId, idUsuario, token: auth.auth?.token! })
     },
     onSuccess: () => {
       setMsg({ type: 'ok', text: 'Administrador removido correctamente.' })
@@ -179,7 +182,7 @@ const AdminCompaniasPage = () => {
     onSuccess: () => {
       setMsg({ type: 'ok', text: 'Compañía creada correctamente.' })
       setModal(null)
-      setForm({ nombreCompania: '', descripcionCompania: '', idUsuarioAdmin: 0 })
+      setForm({ nombreCompania: '', descripcionCompania: '', idUsuarioAdmin: 0, createdAt: '' })
       qc.invalidateQueries({ queryKey: ['admin-companias'] })
     },
     onError: (err: any) => {
@@ -457,6 +460,9 @@ const AdminCompaniasPage = () => {
             </h3>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <InputGroup label="Fecha creación" type="datetime-local" name="createdAt" value={form.createdAt}
+                onChange={handleChange} placeholder="2023-10-01" required />
+
               <InputGroup label="Nombre" name="nombreCompania" value={form.nombreCompania}
                 onChange={handleChange} placeholder="Cinépolis Guatemala" required />
 

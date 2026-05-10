@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { Film, PencilLine, Power, Plus, X } from 'lucide-react'
 import ConfirmModal from '../../components/modal/ConfirmModal'
 import { cinemaService } from '../../services/microservice-cinema/CinemaService'
@@ -79,6 +80,7 @@ type RelationModalMode = 'categorias' | 'actores' | 'agregar-categoria'
 
 const AdminPeliculasPage = () => {
     const queryClient = useQueryClient()
+    const navigate = useNavigate()
     const [filtroEstado, setFiltroEstado] = useState<FiltroEstado>('todas')
     const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
     const [modalOpen, setModalOpen] = useState(false)
@@ -626,6 +628,15 @@ const AdminPeliculasPage = () => {
                                     }}
                                 >
                                     Agregar categoría
+                                </button>
+                                <button
+                                    onClick={() => navigate(`/admin/peliculas/${pelicula.idPelicula}/posters`)}
+                                    style={{
+                                        padding: '.3rem .6rem', borderRadius: '7px', border: 'none', cursor: 'pointer',
+                                        background: 'rgba(168,85,247,0.15)', color: '#d8b4fe', fontSize: '.72rem',
+                                    }}
+                                >
+                                    Administrar Pósters
                                 </button>
                             </div>
                         </div>
