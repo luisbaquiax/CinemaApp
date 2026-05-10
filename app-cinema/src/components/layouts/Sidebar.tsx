@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import {
   LayoutDashboard, Film, Users, Building2,
   Wallet, Megaphone, Ticket, BarChart3,
@@ -6,6 +7,12 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../../hooks/UseAuth'
 import { useState, useEffect } from 'react'
+import { cinemaAdminCineService } from '../../services/microservice-cinema/CinemaAdminCineService'
+import {
+  ADMIN_CINE_COMPANY_CHANGED_EVENT,
+  getStoredSelectedCompaniaId,
+  resolveSelectedCompania,
+} from '../../utils/adminCineSelection'
 
 interface NavItem {
   label: string
@@ -60,6 +67,7 @@ const roleNavConfig: Record<string, NavSection[]> = {
       title: 'Operación',
       items: [
         { label: 'Mis Compañías', path: '/cine/companias', icon: <Building2 size={16} /> },
+        { label: 'Panel Cine', path: '/cine/opciones', icon: <Building2 size={16} /> },
         { label: 'Salas', path: '/cine/salas', icon: <Armchair size={16} /> },
         { label: 'Funciones', path: '/cine/funciones', icon: <Clock size={16} /> },
       ]
@@ -67,7 +75,7 @@ const roleNavConfig: Record<string, NavSection[]> = {
     {
       title: 'Finanzas',
       items: [
-        { label: 'Cartera', path: '/cine/cartera', icon: <Wallet size={16} /> },
+        { label: 'Cartera Cine', path: '/cine/cartera', icon: <Wallet size={16} /> },
       ]
     },
     {
@@ -94,7 +102,7 @@ const roleNavConfig: Record<string, NavSection[]> = {
     {
       title: 'Finanzas',
       items: [
-        { label: 'Cartera', path: '/anunciante/cartera', icon: <Wallet size={16} /> },
+        { label: 'Cartera Anunciante', path: '/anunciante/cartera', icon: <Wallet size={16} /> },
       ]
     }
   ],
@@ -124,6 +132,8 @@ const roleNavConfig: Record<string, NavSection[]> = {
 export default function Sidebar() {
   const { auth } = useAuth()
   const location = useLocation()
+  const isAdminCine = auth?.roles?.includes('ROLE_ADMIN_CINE') ?? false
+  const [selectedCompaniaId, setSelectedCompaniaId] = useState<number | null>(() => getStoredSelectedCompaniaId())
 
   //estado colapsado persistente
   const [collapsed, setCollapsed] = useState(() => {
@@ -133,6 +143,42 @@ export default function Sidebar() {
   useEffect(() => {
     localStorage.setItem('sidebar-collapsed', String(collapsed))
   }, [collapsed])
+
+  useEffect(() => {
+    if (!isAdminCine) return
+
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== 'admin-cine-selected-company-id') return
+      setSelectedCompaniaId(getStoredSelectedCompaniaId())
+    }
+
+    const onCompanyChanged = (event: Event) => {
+      const custom = event as CustomEvent<{ idCompania?: number }>
+      if (custom.detail?.idCompania != null) {
+        setSelectedCompaniaId(custom.detail.idCompania)
+        return
+      }
+      setSelectedCompaniaId(getStoredSelectedCompaniaId())
+    }
+
+    window.addEventListener('storage', onStorage)
+    window.addEventListener(ADMIN_CINE_COMPANY_CHANGED_EVENT, onCompanyChanged)
+
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      window.removeEventListener(ADMIN_CINE_COMPANY_CHANGED_EVENT, onCompanyChanged)
+    }
+  }, [isAdminCine])
+
+  const { data: misCompanias = [] } = useQuery({
+    queryKey: ['sidebar-admin-cine-companias', auth?.idUsuario],
+    queryFn: () => cinemaAdminCineService.getMisCompanias(auth!.idUsuario),
+    enabled: isAdminCine && !!auth?.idUsuario,
+  })
+
+  const companiaActiva = isAdminCine
+    ? resolveSelectedCompania(misCompanias, selectedCompaniaId)
+    : null
 
   //construir secciones combinadas
   const sections: NavSection[] = []
@@ -205,6 +251,34 @@ export default function Sidebar() {
 
       {/* NAV */}
       <nav style={{ flex: 1, padding: '.5rem' }}>
+        {!collapsed && isAdminCine && companiaActiva && (
+          <div
+            style={{
+              margin: '.15rem .25rem .75rem',
+              padding: '.6rem .7rem',
+              borderRadius: '10px',
+              border: '1px solid rgba(96,165,250,0.15)',
+              background: 'rgba(30,64,175,0.12)',
+            }}
+          >
+            <div style={{ fontSize: '.63rem', color: '#93c5fd', textTransform: 'uppercase', marginBottom: '.2rem' }}>
+              Cine Activo
+            </div>
+            <div
+              style={{
+                color: '#e2e8f0',
+                fontSize: '.8rem',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+              title={companiaActiva.nombreCompania}
+            >
+              {companiaActiva.nombreCompania}
+            </div>
+          </div>
+        )}
+
         {sections.map(section => (
           <div key={section.title} style={{ marginBottom: '1rem' }}>
 

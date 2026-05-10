@@ -28,6 +28,7 @@ import AdminCostoGlobalPage from "../pages/admin/AdminCostoGlobalPage"
 import AdminPeliculasPage from "../pages/admin/AdminPeliculasPage"
 import AdminPeliculaPostersPage from "../pages/admin/AdminPeliculaPostersPage"
 import MisCompaniasPage from "../pages/admin-cine/MisCompaniasPage"
+import AdminCineOpcionesPage from "../pages/admin-cine/AdminCineOpcionesPage"
 import CompaniaDetallePage from "../pages/admin-cine/CompaniaDetallePage"
 import CompaniaAdminsPage from "../pages/admin-cine/CompaniaAdminsPage"
 import SalasPage from "../pages/admin-cine/SalasPage"
@@ -91,6 +92,8 @@ export default function AppRouter() {
         <Route element={<ProtectedRoute rolesPermitidos={["ROLE_ADMIN_CINE"]} />}>
           <Route element={<DashboardLayout />}>
             <Route path="/cine/companias"     element={<MisCompaniasPage />} />
+            <Route path="/cine/opciones"      element={<AdminCineOpcionesPage />} />
+            <Route path="/cine/opciones/:idCompania" element={<AdminCineOpcionesPage />} />
             <Route path="/cine/companias/:id" element={<CompaniaDetallePage />} />
             <Route path="/cine/salas"         element={<SalasPage />} />
             <Route path="/cine/funciones"     element={<FuncionesPage />} />

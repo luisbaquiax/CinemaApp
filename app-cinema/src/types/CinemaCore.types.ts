@@ -171,16 +171,25 @@ export interface CostoGlobalResponse {
 export interface FuncionRequest {
   idSala: number;
   idPelicula: number;
-  fechaHora: string;
+  fechaHoraInicio: string;
   precio: number;
   activo?: boolean;
+}
+
+
+export interface FuncionUpdateRequest {
+  idPelicula: number;
+  fechaHoraInicio: string;
+  precio: number;
+  activo: boolean;
 }
 
 export interface FuncionResponse {
   id: number;
   idSala: number;
   idPelicula: number;
-  fechaHora: string;
+  fechaHoraInicio: string;
+  fechaHoraFin: string;
   precio: number;
   activo: boolean;
 }
@@ -286,6 +295,7 @@ export interface SalaResponse {
   nombre: string;
   filas: number;
   columnas: number;
+  capacidad: number;
   aceptaComentarios: boolean;
   visible: boolean;
   createdAt: string;
