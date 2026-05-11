@@ -44,7 +44,7 @@ const CarteraCinePage = () => {
         mutationFn: () =>
             cinemaAdminCineService.addRemoveFunds(selectedCompaniaId as number, {
                 monto: Number(monto),
-                agregarFondos,
+                agregarFondos: true,
             }),
         onSuccess: async res => {
             setMsg({ type: 'ok', text: res.message || 'Transacción realizada correctamente.' })
@@ -99,10 +99,6 @@ const CarteraCinePage = () => {
                             placeholder="Monto"
                             required
                         />
-                        <label style={{ color: '#cbd5e1', fontSize: '.82rem' }}>
-                            <input type="checkbox" checked={agregarFondos} onChange={e => setAgregarFondos(e.target.checked)} style={{ marginRight: '.4rem' }} />
-                            {agregarFondos ? 'Agregar fondos' : 'Retirar fondos'}
-                        </label>
 
                         <button
                             onClick={() => transaccionMutation.mutate()}

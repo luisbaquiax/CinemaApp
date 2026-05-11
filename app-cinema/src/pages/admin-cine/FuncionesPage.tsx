@@ -354,39 +354,61 @@ const FuncionesPage = () => {
                     ) : !funciones.length ? (
                         <div style={{ color: '#94a3b8' }}>No hay funciones registradas para esta sala.</div>
                     ) : (
-                        <div style={{ display: 'grid', gap: '.55rem' }}>
+                        <div style={{ display: 'grid', gap: '.7rem' }}>
                             {funciones.map(fn => (
-                                <div key={fn.id} style={{ border: '1px solid rgba(96,165,250,0.1)', borderRadius: '10px', padding: '.75rem' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '.8rem' }}>
-                                        <div>
-                                            <div style={{ color: '#f1f5f9', fontWeight: 600 }}>Función #{fn.id}</div>
-                                            <div style={{ color: '#94a3b8', fontSize: '.8rem' }}>
-                                                Sala {fn.idSala} · Película {fn.idPelicula} · Inicio {new Date(fn.fechaHoraInicio).toLocaleString()}
+                                <div key={fn.id} style={{ border: '1px solid rgba(96,165,250,0.15)', borderRadius: '10px', padding: '.9rem', background: 'rgba(30,41,59,0.4)' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'flex-start' }}>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.4rem' }}>
+                                                <div style={{ color: '#bfdbfe', fontWeight: 700, fontSize: '1rem' }}>
+                                                    {fn.pelicula.titulo}
+                                                </div>
+                                                <span style={{ color: '#64748b', fontSize: '.75rem' }}>#{fn.id}</span>
                                             </div>
-                                            <div style={{ color: '#94a3b8', fontSize: '.8rem' }}>
-                                                Precio: Q {Number(fn.precio).toFixed(2)} · Estado: {fn.activo ? 'Activa' : 'Inactiva'}
+                                            <div style={{ color: '#cbd5e1', fontSize: '.85rem', marginBottom: '.3rem' }}>
+                                                📽️ {fn.sala.nombre} · 🎬 {fn.pelicula.titulo}
+                                            </div>
+                                            <div style={{ color: '#94a3b8', fontSize: '.8rem', marginBottom: '.4rem' }}>
+                                                🕒 Inicio: {new Date(fn.fechaHoraInicio).toLocaleString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                            <div style={{ color: '#94a3b8', fontSize: '.8rem', marginBottom: '.3rem' }}>
+                                                🕐 Fin: {new Date(fn.fechaHoraFin).toLocaleString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '1rem', marginTop: '.5rem' }}>
+                                                <span style={{ color: '#f1f5f9', fontWeight: 600 }}>
+                                                    💰 Q {Number(fn.precio).toFixed(2)}
+                                                </span>
+                                                <span style={{ 
+                                                    color: fn.activo ? '#86efac' : '#fb7185', 
+                                                    fontWeight: 500,
+                                                    padding: '0.2rem 0.6rem',
+                                                    borderRadius: '4px',
+                                                    background: fn.activo ? 'rgba(16,185,129,0.1)' : 'rgba(244,63,94,0.1)'
+                                                }}>
+                                                    {fn.activo ? '✓ Activa' : '✗ Inactiva'}
+                                                </span>
                                             </div>
                                         </div>
-                                        <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                                        <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                                             <button
                                                 onClick={() => {
                                                     setEditingFuncion(fn)
                                                     setUpdateForm({
-                                                        idPelicula: String(fn.idPelicula),
+                                                        idPelicula: String(fn.pelicula.idPelicula),
                                                         fechaHoraInicio: fn.fechaHoraInicio.slice(0, 16),
                                                         precio: String(fn.precio),
                                                         activo: fn.activo,
                                                     })
                                                 }}
-                                                style={{ padding: '.35rem .55rem', borderRadius: '8px', border: 'none', background: 'rgba(59,130,246,0.2)', color: '#bfdbfe' }}
+                                                style={{ padding: '.35rem .65rem', borderRadius: '6px', border: 'none', background: 'rgba(59,130,246,0.2)', color: '#bfdbfe', cursor: 'pointer', fontSize: '.8rem', fontWeight: 500 }}
                                             >
-                                                Editar
+                                                ✏️ Editar
                                             </button>
                                             <button
                                                 onClick={() => setPendingAction({ type: 'toggle', funcion: fn, activar: !fn.activo })}
-                                                style={{ padding: '.35rem .55rem', borderRadius: '8px', border: 'none', background: 'rgba(168,85,247,0.18)', color: '#ddd6fe' }}
+                                                style={{ padding: '.35rem .65rem', borderRadius: '6px', border: 'none', background: fn.activo ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)', color: fn.activo ? '#fca5a5' : '#86efac', cursor: 'pointer', fontSize: '.8rem', fontWeight: 500 }}
                                             >
-                                                {fn.activo ? 'Desactivar' : 'Activar'}
+                                                {fn.activo ? '🔒 Desactivar' : '🔓 Activar'}
                                             </button>
                                         </div>
                                     </div>

@@ -186,8 +186,8 @@ export interface FuncionUpdateRequest {
 
 export interface FuncionResponse {
   id: number;
-  idSala: number;
-  idPelicula: number;
+  sala: SalaResponse;
+  pelicula: PeliculaResponse;
   fechaHoraInicio: string;
   fechaHoraFin: string;
   precio: number;
