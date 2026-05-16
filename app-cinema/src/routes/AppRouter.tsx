@@ -11,6 +11,7 @@ import HomePage                 from "../pages/public/HomePage"
 import PeliculasPage            from "../pages/public/PeliculasPage"
 import PeliculaDetallePage      from "../pages/public/PeliculaDetallePage"
 import PeliculaCinesPage        from "../pages/public/PeliculaCinesPage"
+import CompraBoletoPage         from "../pages/public/CompraBoletoPage"
 import LoginPage                from "../pages/auth/LoginPage"
 import RegisterPage             from "../pages/auth/RegisterPage"
 import ResetPasswordPage        from "../pages/auth/ResetPasswordPage"
@@ -19,6 +20,7 @@ import ConfirmResetPasswordPage from "../pages/auth/ConfirmResetPasswordPage"
 // Compartidas
 import PerfilPage  from "../pages/perfil/PerfilPage"
 import CarteraPage from "../pages/perfil/CarteraPage"
+import MisBoletosPage from "../pages/perfil/MisBoletosPage"
 
 // Admin Sistema
 import AdminUsuariosPage    from "../pages/admin/AdminUsuariosPage"
@@ -55,6 +57,7 @@ export default function AppRouter() {
           <Route path="/peliculas" element={<PeliculasPage />} />
           <Route path="/peliculas/:id" element={<PeliculaDetallePage />} />
           <Route path="/peliculas/:id/cines" element={<PeliculaCinesPage />} />
+          <Route path="/peliculas/:id/cines/:funcionId" element={<CompraBoletoPage />} />
         </Route>
 
         {/* Auth sin layout (pantallas limpias) */}
@@ -113,14 +116,7 @@ export default function AppRouter() {
         {/* USUARIO COMÚN */}
         <Route element={<ProtectedRoute rolesPermitidos={["ROLE_USUARIO"]} />}>
           <Route element={<DashboardLayout />}>
-            <Route path="/mis-boletos" element={<div>Mis Boletos</div>} />
-          </Route>
-        </Route>
-
-        {/* USUARIO COMÚN en vista pública (con layout público) */}
-        <Route element={<ProtectedRoute rolesPermitidos={["ROLE_USUARIO"]} />}>
-          <Route element={<PublicLayout />}>
-            <Route path="/peliculas/:id/cines" element={<div>Cines de Película</div>} />
+            <Route path="/mis-boletos" element={<MisBoletosPage />} />
           </Route>
         </Route>
 
