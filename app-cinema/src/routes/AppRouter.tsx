@@ -11,6 +11,7 @@ import HomePage                 from "../pages/public/HomePage"
 import PeliculasPage            from "../pages/public/PeliculasPage"
 import PeliculaDetallePage      from "../pages/public/PeliculaDetallePage"
 import PeliculaCinesPage        from "../pages/public/PeliculaCinesPage"
+import CompraBoletoPage         from "../pages/public/CompraBoletoPage"
 import LoginPage                from "../pages/auth/LoginPage"
 import RegisterPage             from "../pages/auth/RegisterPage"
 import ResetPasswordPage        from "../pages/auth/ResetPasswordPage"
@@ -19,6 +20,7 @@ import ConfirmResetPasswordPage from "../pages/auth/ConfirmResetPasswordPage"
 // Compartidas
 import PerfilPage  from "../pages/perfil/PerfilPage"
 import CarteraPage from "../pages/perfil/CarteraPage"
+import MisBoletosPage from "../pages/perfil/MisBoletosPage"
 
 // Admin Sistema
 import AdminUsuariosPage    from "../pages/admin/AdminUsuariosPage"
@@ -28,6 +30,7 @@ import AdminCostoGlobalPage from "../pages/admin/AdminCostoGlobalPage"
 import AdminPeliculasPage from "../pages/admin/AdminPeliculasPage"
 import AdminPeliculaPostersPage from "../pages/admin/AdminPeliculaPostersPage"
 import MisCompaniasPage from "../pages/admin-cine/MisCompaniasPage"
+import AdminCineOpcionesPage from "../pages/admin-cine/AdminCineOpcionesPage"
 import CompaniaDetallePage from "../pages/admin-cine/CompaniaDetallePage"
 import CompaniaAdminsPage from "../pages/admin-cine/CompaniaAdminsPage"
 import SalasPage from "../pages/admin-cine/SalasPage"
@@ -54,6 +57,7 @@ export default function AppRouter() {
           <Route path="/peliculas" element={<PeliculasPage />} />
           <Route path="/peliculas/:id" element={<PeliculaDetallePage />} />
           <Route path="/peliculas/:id/cines" element={<PeliculaCinesPage />} />
+          <Route path="/peliculas/:id/cines/:funcionId" element={<CompraBoletoPage />} />
         </Route>
 
         {/* Auth sin layout (pantallas limpias) */}
@@ -91,6 +95,8 @@ export default function AppRouter() {
         <Route element={<ProtectedRoute rolesPermitidos={["ROLE_ADMIN_CINE"]} />}>
           <Route element={<DashboardLayout />}>
             <Route path="/cine/companias"     element={<MisCompaniasPage />} />
+            <Route path="/cine/opciones"      element={<AdminCineOpcionesPage />} />
+            <Route path="/cine/opciones/:idCompania" element={<AdminCineOpcionesPage />} />
             <Route path="/cine/companias/:id" element={<CompaniaDetallePage />} />
             <Route path="/cine/salas"         element={<SalasPage />} />
             <Route path="/cine/funciones"     element={<FuncionesPage />} />
@@ -110,14 +116,7 @@ export default function AppRouter() {
         {/* USUARIO COMÚN */}
         <Route element={<ProtectedRoute rolesPermitidos={["ROLE_USUARIO"]} />}>
           <Route element={<DashboardLayout />}>
-            <Route path="/mis-boletos" element={<div>Mis Boletos</div>} />
-          </Route>
-        </Route>
-
-        {/* USUARIO COMÚN en vista pública (con layout público) */}
-        <Route element={<ProtectedRoute rolesPermitidos={["ROLE_USUARIO"]} />}>
-          <Route element={<PublicLayout />}>
-            <Route path="/peliculas/:id/cines" element={<div>Cines de Película</div>} />
+            <Route path="/mis-boletos" element={<MisBoletosPage />} />
           </Route>
         </Route>
 

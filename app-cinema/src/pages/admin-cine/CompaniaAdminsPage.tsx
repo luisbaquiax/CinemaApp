@@ -5,12 +5,15 @@ import { Shield, UserPlus } from 'lucide-react'
 import { cinemaService } from '../../services/microservice-cinema/CinemaService'
 import { authService } from '../../services/microservice-users/authService'
 import type { CompaniaAdminRequest } from '../../types/CinemaCore.types'
+import { useAuth } from '../../hooks/UseAuth'
 
 const CompaniaAdminsPage = () => {
   const { id } = useParams()
   const queryClient = useQueryClient()
   const [idUsuario, setIdUsuario] = useState<number | ''>('')
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+
+  const { auth } = useAuth()
 
   const companiaId = Number(id)
 
@@ -85,7 +88,7 @@ const CompaniaAdminsPage = () => {
           </div>
 
           <button
-            onClick={() => idUsuario && addAdminMutation.mutate({ idCompania: companiaId, idUsuario })}
+            onClick={() => idUsuario && addAdminMutation.mutate({ idCompania: companiaId, idUsuario,token: auth!.token })}
             disabled={!idUsuario || addAdminMutation.isPending}
             style={{
               padding: '.7rem 1rem', borderRadius: '12px', border: 'none', cursor: 'pointer',

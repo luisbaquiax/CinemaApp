@@ -20,6 +20,11 @@ import type {
 	CompaniaAdminRequest,
 	PeliculaPostersRequest,
 	PeliculaPostersResponse,
+	ComentarioPeliculaResponse,
+	FuncionResponse,
+	SalaResponse,
+	ComentarioSalaResponse,
+	AsientoResponse,
 } from '../../types/CinemaCore.types'
 
 export const cinemaService = {
@@ -39,6 +44,11 @@ export const cinemaService = {
 		return data
 	},
 
+	getSalasByCompania: async (idCompania: number): Promise<SalaResponse[]> => {
+		const { data } = await cinemaPublicClient.get(`/v1/cinema/companias/${idCompania}/salas`)
+		return data
+	},
+
 	getPeliculasActivas: async (): Promise<PeliculaResponse[]> => {
 		const { data } = await cinemaPublicClient.get('/v1/cinema/peliculas')
 		return data
@@ -53,6 +63,44 @@ export const cinemaService = {
 		const { data } = await cinemaPublicClient.get(`/v1/cinema/peliculas/posters/${idPelicula}`)
 		return data
 	},
+
+
+	getCinesPorPelicula: async (idPelicula: number): Promise<CompaniaResponse[]> => {
+		const { data } = await cinemaPublicClient.get(`/v1/cinema/peliculas/${idPelicula}/cines`)
+		return data
+	},
+
+
+	getComentariosByPelicula: async (idPelicula: number): Promise<ComentarioPeliculaResponse[]> => {
+		const { data } = await cinemaPublicClient.get(`/v1/cinema/peliculas/${idPelicula}/comentarios`)
+		return data
+	},
+
+	getComentariosBySala: async (idSala: number): Promise<ComentarioSalaResponse[]> => {
+		const { data } = await cinemaPublicClient.get(`/v1/cinema/salas/${idSala}/comentarios`)
+		return data
+	},
+
+	getFuncionesByPeliculaYCine: async (idPelicula: number, idCine: number): Promise<FuncionResponse[]> => {
+		const { data } = await cinemaPublicClient.get(`/v1/cinema/peliculas/${idPelicula}/funciones/${idCine}/cine`)
+		return data
+	},
+
+	getFuncionesBySala: async (idSala: number): Promise<FuncionResponse[]> => {
+		const { data } = await cinemaPublicClient.get(`/v1/cinema/funciones/${idSala}/sala`)
+		return data
+	},
+
+	getSalaByPeliculaAndSala: async (idPelicula: number, idSala: number): Promise<FuncionResponse[]> => {
+		const { data } = await cinemaPublicClient.get(`/v1/cinema/peliculas/${idPelicula}/funciones/${idSala}/sala`)
+		return data
+	},
+
+	getAsientosDisponiblesOcupadosPorFuncion: async (idFuncion: number): Promise<AsientoResponse[]> => {
+		const { data } = await cinemaPublicClient.get(`/v1/cinema/funciones/${idFuncion}/asientos`)
+		return data
+	},
+
 
 	//ADMIN SISTEMA
 	// Categorías admin
@@ -184,7 +232,7 @@ export const cinemaService = {
 		return data
 	},
 
-	agregarPosterPelicula: async (poster:PeliculaPostersRequest): Promise<MessageSuccess> => {
+	agregarPosterPelicula: async (poster: PeliculaPostersRequest): Promise<MessageSuccess> => {
 		const formData = new FormData()
 		formData.append('archivo', poster.archivo)
 		formData.append('idPelicula', String(poster.idPelicula))

@@ -17,11 +17,13 @@ export interface AsientoRequest {
   columna: number;
 }
 
+
 export interface AsientoResponse {
   idAsiento: number;
   idSala: number;
   fila: string;
   columna: number;
+  disponible: boolean;
 }
 
 // Categorías
@@ -68,6 +70,7 @@ export interface ComentarioPeliculaRequest {
   idUsuario: number;
   comentario: string;
   calificacion: number;
+  token: string;
 }
 
 export interface ComentarioPeliculaResponse {
@@ -84,6 +87,7 @@ export interface ComentarioSalaRequest {
   idUsuario: number;
   comentario: string;
   calificacion: number;
+  token: string;
 }
 
 export interface ComentarioSalaResponse {
@@ -171,16 +175,25 @@ export interface CostoGlobalResponse {
 export interface FuncionRequest {
   idSala: number;
   idPelicula: number;
-  fechaHora: string;
+  fechaHoraInicio: string;
   precio: number;
   activo?: boolean;
 }
 
+
+export interface FuncionUpdateRequest {
+  idPelicula: number;
+  fechaHoraInicio: string;
+  precio: number;
+  activo: boolean;
+}
+
 export interface FuncionResponse {
   id: number;
-  idSala: number;
-  idPelicula: number;
-  fechaHora: string;
+  sala: SalaResponse;
+  pelicula: PeliculaResponse;
+  fechaHoraInicio: string;
+  fechaHoraFin: string;
   precio: number;
   activo: boolean;
 }
@@ -286,6 +299,7 @@ export interface SalaResponse {
   nombre: string;
   filas: number;
   columnas: number;
+  capacidad: number;
   aceptaComentarios: boolean;
   visible: boolean;
   createdAt: string;
@@ -315,4 +329,47 @@ export interface TransaccionRequest {
 
 export interface MessageSuccess {
   message: string;
+}
+
+export interface AsientoResponse {
+  idAsiento: number;
+  idSala: number;
+  fila: string;
+  columna: number;
+}
+
+export interface BoletoRequest {
+  idFuncion: number;
+  idAsiento: number;
+  idUsuario: number;
+  monto: number;
+  fechaPago: string;
+  token: string;
+}
+
+export interface BoletoResponse {
+  idBoleto: number;
+  nombre: string; //nombre de la sala
+  filas: number;
+  columnas: number;
+  capacidad: number;
+
+
+  //Pelicula
+  titulo: string;
+  duracionMin: number;
+  calificacionPromedio: number;
+  clasificacion: ClasificacionResponse;
+
+
+  //Funcion
+  fechaHoraInicio: string;
+  fechaHoraFin: string;
+  precio: number; // es el mismo que el monto, pero lo dejo para tener toda la info de la función en el boleto, aunque se podría eliminar y usar solo el monto
+
+  //Asiento
+  asiento: AsientoResponse;
+  idUsuario: number;
+  monto: number;
+  fechaPago: string;
 }

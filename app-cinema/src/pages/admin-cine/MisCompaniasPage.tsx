@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { Building2, ChevronRight } from 'lucide-react'
 import { useAuth } from '../../hooks/UseAuth'
-import { cinemaService } from '../../services/microservice-cinema/CinemaService'
+import { cinemaAdminCineService } from '../../services/microservice-cinema/CinemaAdminCineService'
+import { setStoredSelectedCompaniaId } from '../../utils/adminCineSelection'
 
 const MisCompaniasPage = () => {
   const { auth }   = useAuth()
@@ -10,7 +11,7 @@ const MisCompaniasPage = () => {
 
   const { data: companias = [], isLoading } = useQuery({
     queryKey: ['mis-companias', auth?.idUsuario],
-    queryFn:  () => cinemaService.getMisCompanias(auth!.idUsuario),
+    queryFn:  () => cinemaAdminCineService.getMisCompanias(auth!.idUsuario),
     enabled:  !!auth?.idUsuario,
   })
 
@@ -31,7 +32,7 @@ const MisCompaniasPage = () => {
       ) : companias.length === 0 ? (
         <div style={{ textAlign: 'center', color: '#475569', padding: '3rem' }}>
           <Building2 size={40} style={{ margin: '0 auto .75rem', opacity: .3 }} />
-          <p style={{ fontSize: '.9rem' }}>No tenés compañías asignadas aún.</p>
+          <p style={{ fontSize: '.9rem' }}>Aún no tiene un cine para administrar.</p>
           <p style={{ fontSize: '.8rem', color: '#475569', marginTop: '.4rem' }}>
             Contactá al administrador del sistema.
           </p>
@@ -41,7 +42,10 @@ const MisCompaniasPage = () => {
           {companias.map(c => (
             <div
               key={c.idCompania}
-              onClick={() => navigate(`/cine/companias/${c.idCompania}`)}
+              onClick={() => {
+                setStoredSelectedCompaniaId(c.idCompania)
+                navigate(`/cine/opciones/${c.idCompania}`)
+              }}
               style={{
                 display: 'flex', alignItems: 'center', gap: '1rem',
                 padding: '1.25rem 1.5rem', borderRadius: '16px', cursor: 'pointer',
