@@ -31,7 +31,7 @@ const roleMenus: Record<string, { label: string; path: string }[]> = {
 }
 
 const Navbar = () => {
-  const { auth, isAuthenticated, logout, hasRole } = useAuth()
+  const { auth, isAuthenticated, logout } = useAuth()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)

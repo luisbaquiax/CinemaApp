@@ -74,6 +74,11 @@ export const authService = {
     return data
   },
 
+  getUsersByIds: async ({ ididsUsuarios }: { ididsUsuarios: number[] }): Promise<UsuarioComunResponse[]> => {
+    const { data } = await authPrivateClient.post('/v1/users/admin/users/ids', { idsUsuarios: ididsUsuarios });
+    return data
+  },
+
   cambiarEstadoUsuario: async (idUsuario: number, activar: boolean): Promise<{ message: string }> => {
     const { data } = await authPrivateClient.patch(`/v1/users/admin/users/${idUsuario}/${activar}`)
     return data

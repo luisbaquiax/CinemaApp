@@ -27,7 +27,7 @@ const SearchBar = ({ onSearch }: Props) => {
           value={query}
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSearch()}
-          placeholder="Busca por título, actor o director..."
+          placeholder="Busca por título..."
           className="flex-1 bg-transparent border-none outline-none text-sm"
           style={{ color: '#f1f5f9', fontFamily: "'DM Sans', sans-serif" }}
         />
