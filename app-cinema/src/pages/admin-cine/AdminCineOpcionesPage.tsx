@@ -13,13 +13,6 @@ const cardStyle: React.CSSProperties = {
   padding: '1rem',
 }
 
-type Opcion = {
-  metodo: 'GET' | 'POST' | 'PUT' | 'PATCH'
-  endpoint: string
-  descripcion: string
-  disponible: boolean
-}
-
 const AdminCineOpcionesPage = () => {
   const { auth } = useAuth()
   const navigate = useNavigate()

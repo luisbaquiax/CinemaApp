@@ -10,7 +10,7 @@ const CarteraCinePage = () => {
     const { auth } = useAuth()
     const [selectedCompaniaId, setSelectedCompaniaId] = useState<number | null>(null)
     const [monto, setMonto] = useState('')
-    const [agregarFondos, setAgregarFondos] = useState(true)
+    //const [agregarFondos, setAgregarFondos] = useState(true)
     const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
 
     const { data: companias = [], isLoading: companiasLoading } = useQuery<CompaniaResponse[]>({
