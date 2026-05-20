@@ -29,6 +29,8 @@ import AdminCategoriasPage  from "../pages/admin/AdminCategoriasPage"
 import AdminCostoGlobalPage from "../pages/admin/AdminCostoGlobalPage"
 import AdminPeliculasPage from "../pages/admin/AdminPeliculasPage"
 import AdminPeliculaPostersPage from "../pages/admin/AdminPeliculaPostersPage"
+import AdminPreciosAnuncioPage from "../pages/admin/AdminPreciosAnuncioPage"
+import AdminCostoBloquePage from "../pages/admin/AdminCostoBloquePage"
 import MisCompaniasPage from "../pages/admin-cine/MisCompaniasPage"
 import AdminCineOpcionesPage from "../pages/admin-cine/AdminCineOpcionesPage"
 import CompaniaDetallePage from "../pages/admin-cine/CompaniaDetallePage"
@@ -36,6 +38,8 @@ import CompaniaAdminsPage from "../pages/admin-cine/CompaniaAdminsPage"
 import SalasPage from "../pages/admin-cine/SalasPage"
 import FuncionesPage from "../pages/admin-cine/FuncionesPage"
 import CarteraCinePage from "../pages/admin-cine/CarteraCinePage"
+import AnuncianteAnunciosPage from "../pages/anunciante/AnuncianteAnunciosPage"
+import AnuncianteCarteraPage from "../pages/anunciante/AnuncianteCarteraPage"
 
 // Admin Cine
 
@@ -86,6 +90,8 @@ export default function AppRouter() {
             <Route path="/admin/categorias"   element={<AdminCategoriasPage />} />
             <Route path="/admin/peliculas"    element={<AdminPeliculasPage />} />
             <Route path="/admin/peliculas/:id/posters" element={<AdminPeliculaPostersPage />} />
+            <Route path="/admin/anuncios/precios" element={<AdminPreciosAnuncioPage />} />
+            <Route path="/admin/anuncios/costo-bloqueo" element={<AdminCostoBloquePage />} />
             <Route path="/admin/costo-global" element={<AdminCostoGlobalPage />} />
             <Route path="/admin/reportes"     element={<div>Admin Reportes</div>} />
           </Route>
@@ -108,8 +114,8 @@ export default function AppRouter() {
         {/* ANUNCIANTE */}
         <Route element={<ProtectedRoute rolesPermitidos={["ROLE_ANUNCIANTE"]} />}>
           <Route element={<DashboardLayout />}>
-            <Route path="/anunciante/anuncios" element={<div>Mis Anuncios</div>} />
-            <Route path="/anunciante/cartera"  element={<div>Cartera Anunciante</div>} />
+            <Route path="/anunciante/anuncios" element={<AnuncianteAnunciosPage />} />
+            <Route path="/anunciante/cartera"  element={<AnuncianteCarteraPage />} />
           </Route>
         </Route>
 

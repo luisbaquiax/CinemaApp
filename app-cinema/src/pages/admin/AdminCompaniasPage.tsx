@@ -4,19 +4,22 @@ import { Building2, Plus, Power, DollarSign, Users } from 'lucide-react'
 import ConfirmModal from '../../components/modal/ConfirmModal'
 import CompanyAdminsModal from '../../components/modal/CompanyAdminsModal'
 import { cinemaService } from '../../services/microservice-cinema/CinemaService'
+import { adsAdminService } from '../../services/microservice-ads-billing/AdsAdminAnunciosService'
+import type { CostoBloqueoAnuncioResponse } from '../../types/Ads.types'
 import { authService } from '../../services/microservice-users/authService'
 import { InputGroup } from '../../components/inputs/InputGroup'
 import type { CompaniaRequest, CompaniaCostoUpdateRequest, CompaniaUpdateRequest } from '../../types/CinemaCore.types'
 import type { UsuarioComunResponse } from '../../types/Usuario.type'
 import { useAuth } from '../../hooks/UseAuth'
 
-type ModalType = 'crear' | 'costo' | 'editar' | null
+type ModalType = 'crear' | 'costo' | 'costo-bloque' | 'editar' | null
 type CompanyAdminsModalMode = 'view' | 'add'
 
 type PendingConfirmAction =
   | { type: 'toggle-company'; idCompania: number; activar: boolean; companyName: string }
   | { type: 'update-company'; companyId: number; companyName: string }
   | { type: 'update-cost'; companyId: number; companyName: string }
+  | { type: 'update-costo-bloque'; companyId: number; companyName: string }
   | { type: 'remove-admin'; companyId: number; idUsuario: number; adminName: string; companyName: string }
 
 const AdminCompaniasPage = () => {
@@ -37,6 +40,8 @@ const AdminCompaniasPage = () => {
   const [costoForm, setCostoForm] = useState<CompaniaCostoUpdateRequest>({
     idCompania: 0, nuevoCosto: 0, fechaCambio: '',
   })
+
+  const [costoBloqueForm, setCostoBloqueForm] = useState<{ idCosto?: number | null; costoDia: number } | null>(null)
 
   const [editForm, setEditForm] = useState<CompaniaUpdateRequest>({
     nombreCompania: '',
@@ -137,6 +142,17 @@ const AdminCompaniasPage = () => {
         setSelected(pendingConfirmAction.companyId)
         costoMutation.mutate()
         break
+      case 'update-costo-bloque':
+        // perform ads bloque create/update depending on existing form
+        if (!selected) break
+        if (!costoBloqueForm) break
+        const token = auth.auth?.token!
+        if (costoBloqueForm.idCosto) {
+          updateCostoBloqueMutation.mutate({ id: costoBloqueForm.idCosto, payload: { costoDia: costoBloqueForm.costoDia, token } })
+        } else {
+          createCostoBloqueMutation.mutate({ companiaId: selected, costoDia: costoBloqueForm.costoDia, token })
+        }
+        break
       case 'remove-admin':
         setCompanyAdminsCompanyId(pendingConfirmAction.companyId)
         removeAdminMutation.mutate(pendingConfirmAction.idUsuario)
@@ -165,6 +181,12 @@ const AdminCompaniasPage = () => {
             return {
               title: 'Actualizar costo',
               message: `¿Deseas actualizar el costo de ${pendingConfirmAction.companyName}?`,
+              confirmText: 'Actualizar',
+            }
+          case 'update-costo-bloque':
+            return {
+              title: 'Actualizar costo bloqueo',
+              message: `¿Deseas actualizar el costo de bloqueo para ${pendingConfirmAction.companyName}?`,
               confirmText: 'Actualizar',
             }
           case 'remove-admin':
@@ -226,6 +248,53 @@ const AdminCompaniasPage = () => {
     onError: (err: any) => {
       setModal(null)
       setMsg({ type: 'err', text: err?.response?.data?.message || 'Error al actualizar costo.' })
+    }
+  })
+
+  const { data: costosBloqueoRaw, isLoading: costosBloqueoLoading } = useQuery<unknown>({
+    queryKey: ['admin-ads-costos-bloqueo'],
+    queryFn: adsAdminService.listCostosBloqueo,
+  })
+
+  const costosBloqueo: CostoBloqueoAnuncioResponse[] = Array.isArray(costosBloqueoRaw)
+    ? (costosBloqueoRaw as CostoBloqueoAnuncioResponse[]).filter(
+        (item): item is CostoBloqueoAnuncioResponse =>
+          !!item &&
+          typeof item.idCostoBloqueoAnuncio === 'number' &&
+          typeof item.companiaId === 'number',
+      )
+    : []
+
+  const costosBloqueoByCompania = useMemo(
+    () => new Map(costosBloqueo.map(item => [item.companiaId, item])),
+    [costosBloqueo],
+  )
+
+  const createCostoBloqueMutation = useMutation({
+    mutationFn: (payload: { companiaId: number; costoDia: number; token: string }) => adsAdminService.createCostoBloque(payload),
+    onSuccess: async (res: any) => {
+      setMsg({ type: 'ok', text: res.message || 'Costo bloqueo creado correctamente.' })
+      setModal(null)
+      setSelected(null)
+      await qc.invalidateQueries({ queryKey: ['admin-companias'] })
+      await qc.invalidateQueries({ queryKey: ['admin-ads-costos-bloqueo'] })
+    },
+    onError: (err: any) => {
+      setMsg({ type: 'err', text: err?.response?.data?.message || 'Error al crear costo bloqueo.' })
+    }
+  })
+
+  const updateCostoBloqueMutation = useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: { costoDia: number; token: string } }) => adsAdminService.updateCostoBloque(id, payload),
+    onSuccess: async (res: any) => {
+      setMsg({ type: 'ok', text: res.message || 'Costo bloqueo actualizado correctamente.' })
+      setModal(null)
+      setSelected(null)
+      await qc.invalidateQueries({ queryKey: ['admin-companias'] })
+      await qc.invalidateQueries({ queryKey: ['admin-ads-costos-bloqueo'] })
+    },
+    onError: (err: any) => {
+      setMsg({ type: 'err', text: err?.response?.data?.message || 'Error al actualizar costo bloqueo.' })
     }
   })
 
@@ -308,6 +377,9 @@ const AdminCompaniasPage = () => {
                   <div>
                     <div style={{ fontSize: '.9rem', fontWeight: 500, color: '#f1f5f9' }}>{c.nombreCompania}</div>
                     <div style={{ fontSize: '.8rem', color: '#94a3b8' }}>Costo Actual: ${c.costoActual}</div>
+                    <div style={{ fontSize: '.78rem', color: '#94a3b8' }}>
+                      Costo Bloqueo: ${costosBloqueoByCompania.get(c.idCompania)?.costoDia ?? 0}
+                    </div>
                     <span style={{
                       fontSize: '.65rem', fontWeight: 500, padding: '.15rem .45rem', borderRadius: '999px',
                       background: c.activo ? 'rgba(34,197,94,0.12)' : 'rgba(239,68,68,0.12)',
@@ -372,6 +444,27 @@ const AdminCompaniasPage = () => {
                   }}
                 >
                   <DollarSign size={12} /> Costo
+                </button>
+
+                <button
+                  onClick={() => {
+                    const existente = costosBloqueoByCompania.get(c.idCompania)
+                    setSelected(c.idCompania)
+                    setCostoBloqueForm({
+                      idCosto: existente?.idCostoBloqueoAnuncio ?? null,
+                      costoDia: existente?.costoDia ?? 0,
+                    })
+                    setModal('costo-bloque')
+                    setMsg(null)
+                  }}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '.3rem',
+                    padding: '.35rem .7rem', borderRadius: '8px', border: 'none',
+                    fontSize: '.72rem', cursor: 'pointer',
+                    background: 'rgba(139,92,246,0.12)', color: '#c4b5fd',
+                  }}
+                >
+                  <DollarSign size={12} /> Costo Bloqueo
                 </button>
 
                 <button
@@ -586,6 +679,68 @@ const AdminCompaniasPage = () => {
                   Cancelar
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Costo Bloqueo (ads) */}
+      {modal === 'costo-bloque' && (
+        <div onClick={() => { setModal(null); setCostoBloqueForm(null) }} style={{
+          position: 'fixed', inset: 0, zIndex: 200,
+          background: 'rgba(15,23,42,0.85)', backdropFilter: 'blur(6px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem'
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            width: '100%', maxWidth: '420px', borderRadius: '20px', padding: '2rem',
+            background: 'rgba(15,23,42,0.97)',
+            border: '1px solid rgba(96,165,250,0.2)',
+            boxShadow: '0 24px 60px rgba(0,0,0,0.5)'
+          }}>
+            <h3 style={{
+              fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.3rem',
+              letterSpacing: '.08em', color: '#f1f5f9', marginBottom: '1.25rem'
+            }}>
+              Actualizar Costo de Bloqueo
+            </h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {costosBloqueoLoading && (
+                <div style={{ color: '#94a3b8', fontSize: '.8rem' }}>⏳ Cargando costos de bloqueo...</div>
+              )}
+
+              <InputGroup
+                label="Costo por día (GTQ)" name="costoDia" type="number"
+                value={costoBloqueForm?.costoDia ?? 0}
+                onChange={e => setCostoBloqueForm(prev => ({ ...(prev ?? { idCosto: null, costoDia: 0 }), costoDia: Number(e.target.value) }))}
+                placeholder="0.00" required
+                minValue={0}
+              />
+
+              <div style={{ display: 'flex', gap: '.5rem', marginTop: '.25rem' }}>
+                <button
+                  onClick={() => openConfirm({ type: 'update-costo-bloque', companyId: selected!, companyName: selectedCompany?.nombreCompania ?? 'la compañía' })}
+                  disabled={createCostoBloqueMutation.isPending || updateCostoBloqueMutation.isPending}
+                  style={{
+                    flex: 1, padding: '.7rem', borderRadius: '12px', border: 'none',
+                    background: 'linear-gradient(135deg, var(--blue-mid), var(--blue-light))',
+                    color: '#fff', fontSize: '.88rem', cursor: 'pointer'
+                  }}
+                >
+                  {createCostoBloqueMutation.isPending || updateCostoBloqueMutation.isPending ? '⏳...' : (costoBloqueForm?.idCosto ? 'Actualizar' : 'Crear')}
+                </button>
+                <button onClick={() => { setModal(null); setSelected(null); setCostoBloqueForm(null) }} style={{
+                  padding: '.7rem 1rem', borderRadius: '12px',
+                  border: '1px solid rgba(96,165,250,0.2)',
+                  background: 'transparent', color: '#94a3b8', cursor: 'pointer'
+                }}>
+                  Cancelar
+                </button>
+              </div>
+
+              {msg && modal === 'costo-bloque' && (
+                <div style={{ marginTop: '.6rem', color: msg.type === 'ok' ? 'var(--green)' : 'var(--accent2)' }}>{msg.text}</div>
+              )}
             </div>
           </div>
         </div>
