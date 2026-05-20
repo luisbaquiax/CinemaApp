@@ -45,6 +45,7 @@ const roleNavConfig: Record<string, NavSection[]> = {
     {
       title: 'Configuración',
       items: [
+        { label: 'Anuncios', path: '/admin/anuncios', icon: <Megaphone size={16} /> },
         { label: 'Costo Global', path: '/admin/costo-global', icon: <DollarSign size={16} /> },
         { label: 'Precios Anuncios', path: '/admin/anuncios/precios', icon: <Megaphone size={16} /> },
         { label: 'Costo Bloqueo', path: '/admin/anuncios/costo-bloqueo', icon: <DollarSign size={16} /> },

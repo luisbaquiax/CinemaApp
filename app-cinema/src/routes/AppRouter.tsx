@@ -31,6 +31,7 @@ import AdminPeliculasPage from "../pages/admin/AdminPeliculasPage"
 import AdminPeliculaPostersPage from "../pages/admin/AdminPeliculaPostersPage"
 import AdminPreciosAnuncioPage from "../pages/admin/AdminPreciosAnuncioPage"
 import AdminCostoBloquePage from "../pages/admin/AdminCostoBloquePage"
+import AdminAnunciosPage from "../pages/admin/AdminAnunciosPage"
 import MisCompaniasPage from "../pages/admin-cine/MisCompaniasPage"
 import AdminCineOpcionesPage from "../pages/admin-cine/AdminCineOpcionesPage"
 import CompaniaDetallePage from "../pages/admin-cine/CompaniaDetallePage"
@@ -90,6 +91,7 @@ export default function AppRouter() {
             <Route path="/admin/categorias"   element={<AdminCategoriasPage />} />
             <Route path="/admin/peliculas"    element={<AdminPeliculasPage />} />
             <Route path="/admin/peliculas/:id/posters" element={<AdminPeliculaPostersPage />} />
+            <Route path="/admin/anuncios" element={<AdminAnunciosPage />} />
             <Route path="/admin/anuncios/precios" element={<AdminPreciosAnuncioPage />} />
             <Route path="/admin/anuncios/costo-bloqueo" element={<AdminCostoBloquePage />} />
             <Route path="/admin/costo-global" element={<AdminCostoGlobalPage />} />

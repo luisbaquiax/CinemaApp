@@ -178,11 +178,12 @@ const HomePage = () => {
           <select
             value={companiaActiva}
             onChange={(e) => setCompaniaActiva(e.target.value)}
+            className="home-filter-select"
             style={{
               padding: ".75rem .9rem",
               borderRadius: "14px",
               border: "1px solid rgba(96,165,250,0.2)",
-              background: "rgba(30,64,175,0.22)",
+              background: "rgba(15,23,42,0.96)",
               color: "#f1f5f9",
               outline: "none",
             }}
@@ -198,11 +199,12 @@ const HomePage = () => {
           <select
             value={categoriaActiva}
             onChange={(e) => setCategoriaActiva(e.target.value)}
+            className="home-filter-select"
             style={{
               padding: ".75rem .9rem",
               borderRadius: "14px",
               border: "1px solid rgba(96,165,250,0.2)",
-              background: "rgba(30,64,175,0.22)",
+              background: "rgba(15,23,42,0.96)",
               color: "#f1f5f9",
               outline: "none",
             }}
@@ -217,11 +219,12 @@ const HomePage = () => {
           <select
             value={clasificacionActiva}
             onChange={(e) => setClasificacionActiva(e.target.value)}
+            className="home-filter-select"
             style={{
               padding: ".75rem .9rem",
               borderRadius: "14px",
               border: "1px solid rgba(96,165,250,0.2)",
-              background: "rgba(30,64,175,0.22)",
+              background: "rgba(15,23,42,0.96)",
               color: "#f1f5f9",
               outline: "none",
             }}

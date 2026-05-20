@@ -18,6 +18,7 @@ const AdminCostoBloquePage: React.FC = () => {
     const [companiaId, setCompaniaId] = useState<string>("");
     const [costoDia, setCostoDia] = useState<string>("");
     const [editingCostoId, setEditingCostoId] = useState<number | null>(null);
+    const [filterCompaniaId, setFilterCompaniaId] = useState<string>("all");
     const [msg, setMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
     const { data: companiasRaw, isLoading: companiasLoading } = useQuery({
@@ -45,6 +46,13 @@ const AdminCostoBloquePage: React.FC = () => {
     const companiasById = useMemo(() => {
         return new Map(companias.map(compania => [compania.idCompania, compania.nombreCompania]));
     }, [companias]);
+
+    const costosFiltrados = useMemo(() => {
+        if (filterCompaniaId === "all") return costos;
+        const id = Number(filterCompaniaId);
+        if (!Number.isFinite(id)) return costos;
+        return costos.filter(item => item.companiaId === id);
+    }, [costos, filterCompaniaId]);
 
     const createMutation = useMutation({
         mutationFn: (payload: CostoBloqueoAnuncioRequest) => adsAdminService.createCostoBloque(payload),
@@ -209,12 +217,40 @@ const AdminCostoBloquePage: React.FC = () => {
             </div>
 
             <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(30,64,175,0.08)', borderRadius: 8 }}>
-                <h3 style={{ color: '#f1f5f9', marginBottom: '.8rem' }}>Costos de Bloqueo Registrados</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '.8rem', flexWrap: 'wrap', marginBottom: '.8rem' }}>
+                    <h3 style={{ color: '#f1f5f9', marginBottom: 0 }}>Costos de Bloqueo Registrados</h3>
+
+                    <div style={{ minWidth: 220 }}>
+                        <label style={{ color: '#94a3b8', fontSize: '.76rem' }}>
+                            Filtrar por compañía
+                            <select
+                                value={filterCompaniaId}
+                                onChange={(e) => setFilterCompaniaId(e.target.value)}
+                                style={{
+                                    width: '100%',
+                                    marginTop: '.3rem',
+                                    padding: '.55rem .65rem',
+                                    borderRadius: '8px',
+                                    border: '1px solid rgba(96,165,250,0.2)',
+                                    background: 'rgba(15,23,42,0.55)',
+                                    color: '#f1f5f9',
+                                }}
+                            >
+                                <option value="all">Todas las compañías</option>
+                                {companias.map((c) => (
+                                    <option key={c.idCompania} value={c.idCompania}>{c.nombreCompania ?? `Compañía #${c.idCompania}`}</option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+                </div>
 
                 {costosLoading ? (
                     <div style={{ color: '#94a3b8' }}>⏳ Cargando costos...</div>
                 ) : costos.length === 0 ? (
                     <div style={{ color: '#94a3b8' }}>No hay costos de bloqueo registrados.</div>
+                ) : costosFiltrados.length === 0 ? (
+                    <div style={{ color: '#94a3b8' }}>No hay costos para la compañía seleccionada.</div>
                 ) : (
                     <div style={{ overflowX: 'auto' }}>
                         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 640 }}>
@@ -228,7 +264,7 @@ const AdminCostoBloquePage: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {costos.map((item) => (
+                                {costosFiltrados.map((item) => (
                                     <tr key={item.idCostoBloqueoAnuncio} style={{ color: '#e2e8f0', fontSize: '.84rem' }}>
                                         <td style={{ padding: '.55rem .6rem', borderBottom: '1px solid rgba(96,165,250,0.08)' }}>
                                             {item.idCostoBloqueoAnuncio}
