@@ -5,6 +5,7 @@ import type {
     MessageSuccess,
     TransaccionAnuncianteResponse,
     TransaccionAnuncianteRequest,
+    FileAdsRequest,
 } from "../../types/Ads.types";
 
 export const adsAnuncianteService = {
@@ -24,6 +25,49 @@ export const adsAnuncianteService = {
         const { data } = await adsPrivateClient.patch(`/v1/ads/anunciante/anuncios/${id}/status`, null, {
             params: { activo },
         });
+        return data;
+    },
+
+    subirArchivoAnuncio: async (request: FileAdsRequest): Promise<MessageSuccess> => {
+        const anuncioId = request.idAnuncio ?? request.id;
+        if (!anuncioId) {
+            throw new Error('idAnuncio es requerido para subir archivo del anuncio.');
+        }
+        const formData = new FormData();
+        formData.append('id', String(anuncioId));
+        formData.append('file', request.file);
+
+        const { data } = await adsPrivateClient.post(`/v1/ads/anunciante/anuncios/files`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return data;
+    },
+
+    subirAarchivoAnuncio: async (request: FileAdsRequest): Promise<MessageSuccess> => {
+        return adsAnuncianteService.subirArchivoAnuncio(request);
+    },
+
+    actualizarArchivoAnuncio: async (request: FileAdsRequest): Promise<MessageSuccess> => {
+        const anuncioId = request.idAnuncio ?? request.id;
+        if (!anuncioId) {
+            throw new Error('idAnuncio es requerido para actualizar archivo del anuncio.');
+        }
+        const formData = new FormData();
+        formData.append('id', String(anuncioId));
+        formData.append('file', request.file);
+
+        const { data } = await adsPrivateClient.patch(`/v1/ads/anunciante/anuncios/files`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return data;
+    },
+
+    eliminarArchivoAnuncio: async (idAnuncio: number): Promise<MessageSuccess> => {
+        const { data } = await adsPrivateClient.delete(`/v1/ads/anunciante/anuncios/files/${idAnuncio}`);
         return data;
     },
 

@@ -142,3 +142,15 @@ export interface TransaccionAnuncianteResponse {
   descripcion?: string;
   fechaTransaccion: string;
 }
+
+export interface CostoBloqueAnuncioDTO {
+  companiaId: number;
+  token: string;
+}
+
+
+export interface FileAdsRequest {
+  idAnuncio: number;
+  id?: number;
+  file: File;
+}

@@ -5,20 +5,9 @@ interface Props {
   delay?: number;
 }
 
-const formatDate = (value?: string) => {
-  if (!value) return "";
-  return new Date(value).toLocaleString("es-ES", {
-    day: "2-digit",
-    month: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
 const AdCard = ({ ad, delay = 0 }: Props) => {
-  const tipo = ad.tipo?.nombre ?? "ANUNCIO";
-  const esVideo = tipo === "VIDEO_TEXTO" && !!ad.videoUrl;
-  const esImagen = tipo === "TEXTO_IMAGEN" && !!ad.imagenUrl;
+  const esVideo = !!ad.videoUrl;
+  const esImagen = !!ad.imagenUrl && !esVideo;
 
   return (
     <div
@@ -32,76 +21,38 @@ const AdCard = ({ ad, delay = 0 }: Props) => {
         animationDelay: `${delay}s`,
       }}
     >
-      <div
-        style={{
-          width: "100%",
-          minHeight: esImagen ? "120px" : "80px",
-          borderRadius: "9px",
-          background:
-            "linear-gradient(135deg, rgba(37,99,235,0.28), rgba(15,23,42,0.92))",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "1rem",
-          marginBottom: ".6rem",
-          overflow: "hidden",
-          position: "relative",
-        }}
-      >
-        {esImagen ? (
-          <img
-            src={ad.imagenUrl}
-            alt={ad.titulo}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-        ) : (
-          <div style={{ textAlign: "center", padding: ".75rem" }}>
-            <div
-              style={{
-                fontSize: ".7rem",
-                letterSpacing: ".12em",
-                textTransform: "uppercase",
-                color: "#bfdbfe",
-              }}
-            >
-              {tipo}
-            </div>
-            <div
-              style={{
-                fontSize: ".9rem",
-                fontWeight: 600,
-                color: "#f1f5f9",
-                marginTop: ".25rem",
-              }}
-            >
-              {ad.activo ? "Activo" : "Inactivo"}
-            </div>
-            {esVideo && (
-              <div
-                style={{
-                  fontSize: ".65rem",
-                  color: "#93c5fd",
-                  marginTop: ".25rem",
-                }}
-              >
-                ▶ Contenido en video disponible
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div
-        style={{
-          fontSize: ".6rem",
-          letterSpacing: ".12em",
-          textTransform: "uppercase",
-          color: "var(--accent)",
-          marginBottom: ".25rem",
-        }}
-      >
-        {tipo}
-      </div>
+      {(esImagen || esVideo) && (
+        <div
+          style={{
+            width: "100%",
+            minHeight: esImagen ? "120px" : "80px",
+            borderRadius: "9px",
+            background:
+              "linear-gradient(135deg, rgba(37,99,235,0.28), rgba(15,23,42,0.92))",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "1rem",
+            marginBottom: ".6rem",
+            overflow: "hidden",
+            position: "relative",
+          }}
+        >
+          {esImagen ? (
+            <img
+              src={ad.imagenUrl}
+              alt={ad.titulo}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <video
+              src={ad.videoUrl ?? undefined}
+              controls
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          )}
+        </div>
+      )}
       <div
         style={{
           fontSize: ".72rem",
@@ -122,22 +73,6 @@ const AdCard = ({ ad, delay = 0 }: Props) => {
       >
         {ad.contenidoTexto}
       </div>
-      {esVideo && ad.videoUrl && (
-        <a
-          href={ad.videoUrl}
-          target="_blank"
-          rel="noreferrer"
-          style={{
-            fontSize: ".62rem",
-            fontWeight: 600,
-            color: "var(--accent2)",
-            marginTop: ".35rem",
-            display: "inline-block",
-          }}
-        >
-          ▶ Ver video
-        </a>
-      )}
     </div>
   );
 };

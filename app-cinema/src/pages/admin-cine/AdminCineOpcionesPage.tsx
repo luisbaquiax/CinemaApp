@@ -136,14 +136,14 @@ const AdminCineOpcionesPage = () => {
         <section style={cardStyle}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.7rem' }}>
             <BarChart3 size={16} color="#93c5fd" />
-            <h3 style={{ color: '#f1f5f9', fontSize: '.95rem' }}>Reportes (Próximamente)</h3>
+            <h3 style={{ color: '#f1f5f9', fontSize: '.95rem' }}>Reportes</h3>
           </div>
-          
+
           <button
-            disabled
-            style={{ marginTop: '.6rem', padding: '.5rem .85rem', borderRadius: '8px', border: '1px solid rgba(148,163,184,0.35)', background: 'transparent', color: '#94a3b8' }}
+            onClick={() => navigate('/cine/reportes')}
+            style={{ marginTop: '.6rem', padding: '.5rem .85rem', borderRadius: '8px', border: 'none', background: 'linear-gradient(135deg, var(--blue-mid), var(--blue-light))', color: '#fff', cursor: 'pointer' }}
           >
-            Pendiente de endpoint
+            Ir a reportes
           </button>
         </section>
       </div>

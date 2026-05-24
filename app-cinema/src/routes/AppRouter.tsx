@@ -39,8 +39,11 @@ import CompaniaAdminsPage from "../pages/admin-cine/CompaniaAdminsPage"
 import SalasPage from "../pages/admin-cine/SalasPage"
 import FuncionesPage from "../pages/admin-cine/FuncionesPage"
 import CarteraCinePage from "../pages/admin-cine/CarteraCinePage"
+import BloqueoAnunciosPage from "../pages/admin-cine/BloqueoAnunciosPage"
+import ReportesPage from "../pages/admin-cine/ReportesPage"
 import AnuncianteAnunciosPage from "../pages/anunciante/AnuncianteAnunciosPage"
 import AnuncianteCarteraPage from "../pages/anunciante/AnuncianteCarteraPage"
+import AnuncianteArchivosAnunciosPage from "../pages/anunciante/AnuncianteArchivosAnunciosPage"
 
 // Admin Cine
 
@@ -109,7 +112,8 @@ export default function AppRouter() {
             <Route path="/cine/salas"         element={<SalasPage />} />
             <Route path="/cine/funciones"     element={<FuncionesPage />} />
             <Route path="/cine/cartera"       element={<CarteraCinePage />} />
-            <Route path="/cine/reportes"      element={<div>Reportes Cine</div>} />
+            <Route path="/cine/bloqueo-anuncios" element={<BloqueoAnunciosPage />} />
+            <Route path="/cine/reportes"      element={<ReportesPage />} />
           </Route>
         </Route>
 
@@ -117,6 +121,7 @@ export default function AppRouter() {
         <Route element={<ProtectedRoute rolesPermitidos={["ROLE_ANUNCIANTE"]} />}>
           <Route element={<DashboardLayout />}>
             <Route path="/anunciante/anuncios" element={<AnuncianteAnunciosPage />} />
+            <Route path="/anunciante/anuncios/archivos" element={<AnuncianteArchivosAnunciosPage />} />
             <Route path="/anunciante/cartera"  element={<AnuncianteCarteraPage />} />
           </Route>
         </Route>

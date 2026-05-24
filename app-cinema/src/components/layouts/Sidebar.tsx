@@ -79,6 +79,7 @@ const roleNavConfig: Record<string, NavSection[]> = {
       title: 'Finanzas',
       items: [
         { label: 'Cartera Cine', path: '/cine/cartera', icon: <Wallet size={16} /> },
+        { label: 'Bloqueo Anuncios', path: '/cine/bloqueo-anuncios', icon: <DollarSign size={16} /> },
       ]
     },
     {
@@ -100,6 +101,7 @@ const roleNavConfig: Record<string, NavSection[]> = {
       title: 'Publicidad',
       items: [
         { label: 'Mis Anuncios', path: '/anunciante/anuncios', icon: <Megaphone size={16} /> },
+        { label: 'Archivos de Anuncios', path: '/anunciante/anuncios/archivos', icon: <Megaphone size={16} /> },
       ]
     },
     {

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Megaphone, Power } from 'lucide-react'
 import ConfirmModal from '../../components/modal/ConfirmModal'
+import AdMediaModal from '../../components/modal/AdMediaModal'
 import { InputGroup } from '../../components/inputs/InputGroup'
 import AdCard from '../../components/ui/AdCard'
 import { useAuth } from '../../hooks/UseAuth'
@@ -28,6 +29,16 @@ const toDatetimeLocal = (date: Date) => {
 const formatMonto = (monto: number) =>
   new Intl.NumberFormat('es-GT', { style: 'currency', currency: 'GTQ' }).format(monto)
 
+type AdMediaKind = 'image' | 'video' | 'text' | 'unsupported'
+
+const resolveAdMediaKind = (anuncio: AnuncioResponse): AdMediaKind => {
+  const nombreTipo = anuncio.tipo?.nombre?.toUpperCase() ?? ''
+  if (nombreTipo === 'TEXTO') return 'text'
+  if (nombreTipo === 'TEXTO_IMAGEN') return 'image'
+  if (nombreTipo === 'VIDEO_TEXTO') return 'video'
+  return 'unsupported'
+}
+
 const AnuncianteAnunciosPage = () => {
   const { auth } = useAuth()
   const qc = useQueryClient()
@@ -39,6 +50,11 @@ const AnuncianteAnunciosPage = () => {
   })
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null)
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
+  const [typeFilter, setTypeFilter] = useState<'all' | 'text' | 'image' | 'video' | 'other'>('all')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [mediaModalAd, setMediaModalAd] = useState<AnuncioResponse | null>(null)
+  const [mediaModalKind, setMediaModalKind] = useState<'image' | 'video'>('image')
 
   const { data: precios = [], isLoading: preciosLoading } = useQuery<PrecioAnuncioResponse[]>({
     queryKey: ['anunciante-precios-anuncio'],
@@ -100,6 +116,32 @@ const AnuncianteAnunciosPage = () => {
     },
   })
 
+  const mediaMutation = useMutation({
+    mutationFn: ({ anuncio, kind, file }: { anuncio: AnuncioResponse; kind: 'image' | 'video'; file: File }) => {
+      const hasMedia = kind === 'video' ? !!anuncio.videoUrl : !!anuncio.imagenUrl
+
+      if (hasMedia) {
+        return adsAnuncianteService.actualizarArchivoAnuncio({
+          idAnuncio: anuncio.idAnuncio,
+          file,
+        })
+      }
+
+      return adsAnuncianteService.subirArchivoAnuncio({
+        idAnuncio: anuncio.idAnuncio,
+        file,
+      })
+    },
+    onSuccess: async (res) => {
+      setMsg({ type: 'ok', text: res?.message || 'Archivo del anuncio actualizado correctamente.' })
+      setMediaModalAd(null)
+      await qc.invalidateQueries({ queryKey: ['anunciante-mis-anuncios', auth?.idUsuario] })
+    },
+    onError: (err: any) => {
+      setMsg({ type: 'err', text: err?.response?.data?.message || 'No se pudo guardar el archivo del anuncio.' })
+    },
+  })
+
   const handleConfirm = () => {
     if (!pendingAction) return
 
@@ -115,6 +157,32 @@ const AnuncianteAnunciosPage = () => {
 
   const totalActivos = misAnuncios.filter(anuncio => anuncio.activo).length
   const totalInactivos = misAnuncios.length - totalActivos
+
+  const anunciosFiltrados = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase()
+
+    return misAnuncios.filter(anuncio => {
+      const mediaKind = resolveAdMediaKind(anuncio)
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'active' && anuncio.activo) ||
+        (statusFilter === 'inactive' && !anuncio.activo)
+
+      const matchesType =
+        typeFilter === 'all' ||
+        (typeFilter === 'text' && mediaKind === 'text') ||
+        (typeFilter === 'image' && mediaKind === 'image') ||
+        (typeFilter === 'video' && mediaKind === 'video') ||
+        (typeFilter === 'other' && mediaKind === 'unsupported')
+
+      const matchesSearch =
+        !term ||
+        anuncio.titulo.toLowerCase().includes(term) ||
+        (anuncio.contenidoTexto ?? '').toLowerCase().includes(term)
+
+      return matchesStatus && matchesType && matchesSearch
+    })
+  }, [misAnuncios, searchTerm, statusFilter, typeFilter])
 
   const confirmTitle = pendingAction?.type === 'buy' ? 'Confirmar compra' : pendingAction?.activar ? 'Activar anuncio' : 'Desactivar anuncio'
   const confirmMessage = pendingAction?.type === 'buy'
@@ -250,34 +318,121 @@ const AnuncianteAnunciosPage = () => {
           {anunciosLoading && <span style={{ color: '#94a3b8' }}>⏳ Cargando anuncios...</span>}
         </div>
 
+        <div style={{ display: 'grid', gap: '.65rem', marginBottom: '.9rem', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))' }}>
+          <label style={{ color: '#94a3b8', fontSize: '.78rem' }}>
+            Filtrar por estado
+            <select
+              value={statusFilter}
+              onChange={e => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
+              style={{ width: '100%', marginTop: '.35rem', padding: '.55rem .65rem', borderRadius: '8px', border: '1px solid rgba(96,165,250,0.2)', background: 'rgba(15,23,42,0.55)', color: '#f1f5f9' }}
+            >
+              <option value="all">Todos</option>
+              <option value="active">Activos</option>
+              <option value="inactive">Inactivos</option>
+            </select>
+          </label>
+
+          <label style={{ color: '#94a3b8', fontSize: '.78rem' }}>
+            Filtrar por tipo
+            <select
+              value={typeFilter}
+              onChange={e => setTypeFilter(e.target.value as 'all' | 'text' | 'image' | 'video' | 'other')}
+              style={{ width: '100%', marginTop: '.35rem', padding: '.55rem .65rem', borderRadius: '8px', border: '1px solid rgba(96,165,250,0.2)', background: 'rgba(15,23,42,0.55)', color: '#f1f5f9' }}
+            >
+              <option value="all">Todos</option>
+              <option value="text">Texto</option>
+              <option value="image">Imagen</option>
+              <option value="video">Video</option>
+              <option value="other">Otro</option>
+            </select>
+          </label>
+
+          <label style={{ color: '#94a3b8', fontSize: '.78rem' }}>
+            Buscar
+            <input
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              placeholder="Título o contenido"
+              style={{ width: '100%', marginTop: '.35rem', padding: '.55rem .65rem', borderRadius: '8px', border: '1px solid rgba(96,165,250,0.2)', background: 'rgba(15,23,42,0.55)', color: '#f1f5f9' }}
+            />
+          </label>
+        </div>
+
         {!misAnuncios.length ? (
           <div style={{ color: '#94a3b8' }}>Aún no has comprado anuncios.</div>
+        ) : !anunciosFiltrados.length ? (
+          <div style={{ color: '#94a3b8' }}>No hay anuncios que coincidan con los filtros aplicados.</div>
         ) : (
           <div style={{ display: 'grid', gap: '1rem' }}>
-            {misAnuncios.map(anuncio => (
-              <div key={anuncio.idAnuncio} style={{ display: 'grid', gap: '.75rem' }}>
-                <AdCard ad={anuncio} delay={0} />
-                <button
-                  type="button"
-                  onClick={() => setPendingAction({ type: 'toggle', anuncio, activar: !anuncio.activo })}
-                  style={{
-                    justifySelf: 'start',
-                    padding: '.45rem .75rem',
-                    borderRadius: '8px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    background: anuncio.activo ? 'rgba(239,68,68,0.16)' : 'rgba(34,197,94,0.16)',
-                    color: anuncio.activo ? '#fca5a5' : '#86efac',
-                  }}
-                >
-                  <Power size={14} style={{ display: 'inline-block', marginRight: '.35rem' }} />
-                  {anuncio.activo ? 'Desactivar' : 'Activar'}
-                </button>
-              </div>
-            ))}
+            {anunciosFiltrados.map(anuncio => {
+              const mediaKind = resolveAdMediaKind(anuncio)
+              const canManageMedia = mediaKind === 'image' || mediaKind === 'video'
+              const mediaLabel = mediaKind === 'video' ? 'video' : 'imagen'
+              const hasMedia = mediaKind === 'video' ? !!anuncio.videoUrl : !!anuncio.imagenUrl
+
+              return (
+                <div key={anuncio.idAnuncio} style={{ display: 'grid', gap: '.75rem' }}>
+                  <AdCard ad={anuncio} delay={0} />
+                  <div style={{ display: 'flex', gap: '.55rem', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={() => setPendingAction({ type: 'toggle', anuncio, activar: !anuncio.activo })}
+                      style={{
+                        justifySelf: 'start',
+                        padding: '.45rem .75rem',
+                        borderRadius: '8px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        background: anuncio.activo ? 'rgba(239,68,68,0.16)' : 'rgba(34,197,94,0.16)',
+                        color: anuncio.activo ? '#fca5a5' : '#86efac',
+                      }}
+                    >
+                      <Power size={14} style={{ display: 'inline-block', marginRight: '.35rem' }} />
+                      {anuncio.activo ? 'Desactivar' : 'Activar'}
+                    </button>
+
+                    {canManageMedia ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMediaModalAd(anuncio)
+                          setMediaModalKind(mediaKind)
+                        }}
+                        disabled={mediaMutation.isPending}
+                        style={{
+                          padding: '.45rem .75rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(96,165,250,0.2)',
+                          background: 'rgba(59,130,246,0.12)',
+                          color: '#bfdbfe',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {hasMedia ? `Actualizar ${mediaLabel}` : `Agregar ${mediaLabel}`}
+                      </button>
+                    ) : (
+                      <span style={{ color: '#94a3b8', fontSize: '.8rem', alignSelf: 'center' }}>
+                        Tipo sin carga de archivo
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )})}
           </div>
         )}
       </section>
+
+      <AdMediaModal
+        open={!!mediaModalAd}
+        anuncio={mediaModalAd}
+        mediaKind={mediaModalKind}
+        isPending={mediaMutation.isPending}
+        onClose={() => setMediaModalAd(null)}
+        onSubmit={(file) => {
+          if (!mediaModalAd) return
+          mediaMutation.mutate({ anuncio: mediaModalAd, kind: mediaModalKind, file })
+        }}
+      />
 
       <ConfirmModal
         open={!!pendingAction}
