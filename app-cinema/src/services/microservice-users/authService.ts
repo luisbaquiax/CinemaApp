@@ -39,6 +39,11 @@ export const authService = {
     return data
   },
 
+  getProfileById: async (idUsuario: number): Promise<UsuarioComunResponse> => {
+    const { data } = await authPrivateClient.get(`/v1/users/me/id/${idUsuario}`)
+    return data
+  },
+
   activarDesctivar2FA: async (username: string, activar: boolean): Promise<{ message: string }> => {
     const { data } = await authPrivateClient.patch(`/v1/users/me/${username}/two-factor-auth`, { activar })
     return data

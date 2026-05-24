@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Building2, Users, Wallet } from 'lucide-react'
 import { useAuth } from '../../hooks/UseAuth'
 import { cinemaService } from '../../services/microservice-cinema/CinemaService'
+import { cinemaAdminCineService } from '../../services/microservice-cinema/CinemaAdminCineService'
 
 const CompaniaDetallePage = () => {
     const { id } = useParams()
@@ -13,7 +14,7 @@ const CompaniaDetallePage = () => {
 
     const companiasQuery = useQuery({
         queryKey: ['mis-companias', auth?.idUsuario],
-        queryFn: () => cinemaService.getMisCompanias(auth!.idUsuario),
+        queryFn: () => cinemaAdminCineService.getMisCompanias(auth!.idUsuario),
         enabled: !!auth?.idUsuario,
     })
 
@@ -30,7 +31,7 @@ const CompaniaDetallePage = () => {
 
     const carteraQuery = useQuery({
         queryKey: ['compania-cartera', id],
-        queryFn: () => cinemaService.getCarteraByCompania(Number(id)),
+        queryFn: () => cinemaAdminCineService.getCarteraByCompania(Number(id)),
         enabled: !!id,
     })
 
