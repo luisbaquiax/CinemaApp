@@ -242,7 +242,7 @@ const FuncionesPage = () => {
 
             {msg && <div style={{ marginBottom: '1rem', color: msg.type === 'ok' ? '#4ade80' : '#f87171', fontSize: '.85rem' }}>{msg.text}</div>}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem', alignItems: 'start' }}>
                 <section style={{ border: '1px solid rgba(96,165,250,0.15)', borderRadius: '12px', padding: '1rem', background: 'rgba(30,64,175,0.1)' }}>
                     <h3 style={{ color: '#f1f5f9', marginBottom: '.8rem' }}>{editingFuncion ? 'Editar función' : 'Crear función'}</h3>
 
@@ -402,7 +402,7 @@ const FuncionesPage = () => {
                                                 }}
                                                 style={{ padding: '.35rem .65rem', borderRadius: '6px', border: 'none', background: 'rgba(59,130,246,0.2)', color: '#bfdbfe', cursor: 'pointer', fontSize: '.8rem', fontWeight: 500 }}
                                             >
-                                                ✏️ Editar
+                                                Editar
                                             </button>
                                             <button
                                                 onClick={() => setPendingAction({ type: 'toggle', funcion: fn, activar: !fn.activo })}

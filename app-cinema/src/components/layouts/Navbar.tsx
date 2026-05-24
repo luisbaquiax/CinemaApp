@@ -23,6 +23,7 @@ const roleMenus: Record<string, { label: string; path: string }[]> = {
   ],
   ROLE_ANUNCIANTE: [
     { label: 'Mis Anuncios', path: '/anunciante/anuncios' },
+    { label: 'Archivos',     path: '/anunciante/anuncios/archivos' },
     { label: 'Cartera',      path: '/anunciante/cartera' },
   ],
   ROLE_USUARIO: [

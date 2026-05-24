@@ -5,15 +5,15 @@ import NowPlayingTicker from "../../components/ui/NowPlayingTicker";
 import SearchBar from "../../components/ui/SearchBar";
 import CategoryPills from "../../components/ui/CategoryPills";
 import MovieCard from "../../components/ui/MovieCard";
-import AdCard from "../../components/ui/AdCard";
 import { cinemaService } from "../../services/microservice-cinema/CinemaService";
-import type { AdItem, Movie } from "../../types/Movie.types";
+import type { Movie } from "../../types/Movie.types";
 import type {
   CategoriaResponse,
   ClasificacionResponse,
   CompaniaResponse,
   PeliculaResponse,
 } from "../../types/CinemaCore.types";
+import AdsAside from "../../components/ui/AdsAside";
 
 const POSTER_BACKGROUNDS = [
   "linear-gradient(160deg,#1e3a5f,#0c1f3a 50%,#1a2f1a)",
@@ -24,66 +24,6 @@ const POSTER_BACKGROUNDS = [
   "linear-gradient(160deg,#0f2a4a,#1a0f2e 50%,#2a1a0f)",
   "linear-gradient(160deg,#1a1a4a,#0f172a 50%,#2e0f1a)",
   "linear-gradient(160deg,#0f3a2a,#0f172a 50%,#3a2a0f)",
-];
-
-const ADS_LEFT: AdItem[] = [
-  {
-    id: 1,
-    tipo: "TEXTO_IMAGEN",
-    titulo: "Banco Industrial — Tu crédito listo",
-    subtitulo: "Tasas desde 8% anual",
-    emoji: "🏦",
-    posterBg: "linear-gradient(135deg,#1d4ed8,#0f172a)",
-    tag: "📢 Anuncio",
-  },
-  {
-    id: 2,
-    tipo: "TEXTO_IMAGEN",
-    titulo: "Domino's — 2x1 en pizzas grandes",
-    subtitulo: "Solo hoy en tu pedido online",
-    emoji: "🍕",
-    posterBg: "linear-gradient(135deg,#b45309,#0f172a)",
-    tag: "🍔 Promoción",
-  },
-  {
-    id: 3,
-    tipo: "VIDEO_TEXTO",
-    titulo: "PS5 Pro — Ya disponible",
-    subtitulo: "Llévalo a cuotas sin interés",
-    emoji: "🎮",
-    posterBg: "linear-gradient(135deg,#065f46,#0f172a)",
-    tag: "🎮 Gaming",
-  },
-];
-
-const ADS_RIGHT: AdItem[] = [
-  {
-    id: 4,
-    tipo: "TEXTO_IMAGEN",
-    titulo: "Mango — Nueva colección otoño",
-    subtitulo: "30% off esta semana",
-    emoji: "🛍️",
-    posterBg: "linear-gradient(135deg,#6d28d9,#0f172a)",
-    tag: "🛍️ Oferta",
-  },
-  {
-    id: 5,
-    tipo: "VIDEO_TEXTO",
-    titulo: "Toyota RAV4 2026 — Llega a GT",
-    subtitulo: "Cotiza sin compromisos",
-    emoji: "🚗",
-    posterBg: "linear-gradient(135deg,#be123c,#0f172a)",
-    tag: "🚘 Autos",
-  },
-  {
-    id: 6,
-    tipo: "TEXTO_IMAGEN",
-    titulo: "Samsung Galaxy S25 Ultra",
-    subtitulo: "Cámara de 200MP · Nuevo",
-    emoji: "📱",
-    posterBg: "linear-gradient(135deg,#0e7490,#0f172a)",
-    tag: "📱 Tech",
-  },
 ];
 
 // Componente principal
@@ -238,11 +178,12 @@ const HomePage = () => {
           <select
             value={companiaActiva}
             onChange={(e) => setCompaniaActiva(e.target.value)}
+            className="home-filter-select"
             style={{
               padding: ".75rem .9rem",
               borderRadius: "14px",
               border: "1px solid rgba(96,165,250,0.2)",
-              background: "rgba(30,64,175,0.22)",
+              background: "rgba(15,23,42,0.96)",
               color: "#f1f5f9",
               outline: "none",
             }}
@@ -258,11 +199,12 @@ const HomePage = () => {
           <select
             value={categoriaActiva}
             onChange={(e) => setCategoriaActiva(e.target.value)}
+            className="home-filter-select"
             style={{
               padding: ".75rem .9rem",
               borderRadius: "14px",
               border: "1px solid rgba(96,165,250,0.2)",
-              background: "rgba(30,64,175,0.22)",
+              background: "rgba(15,23,42,0.96)",
               color: "#f1f5f9",
               outline: "none",
             }}
@@ -277,11 +219,12 @@ const HomePage = () => {
           <select
             value={clasificacionActiva}
             onChange={(e) => setClasificacionActiva(e.target.value)}
+            className="home-filter-select"
             style={{
               padding: ".75rem .9rem",
               borderRadius: "14px",
               border: "1px solid rgba(96,165,250,0.2)",
-              background: "rgba(30,64,175,0.22)",
+              background: "rgba(15,23,42,0.96)",
               color: "#f1f5f9",
               outline: "none",
             }}
@@ -321,11 +264,7 @@ const HomePage = () => {
         }}
       >
         {/* Anuncios izquierda */}
-        <aside className="flex flex-col gap-3">
-          {ADS_LEFT.map((ad, i) => (
-            <AdCard key={ad.id} ad={ad} delay={i * 0.1} />
-          ))}
-        </aside>
+        <AdsAside position="left" />
 
         {/* Películas */}
         <main>
@@ -378,11 +317,7 @@ const HomePage = () => {
         </main>
 
         {/* Anuncios derecha */}
-        <aside className="flex flex-col gap-3">
-          {ADS_RIGHT.map((ad, i) => (
-            <AdCard key={ad.id} ad={ad} delay={i * 0.1} />
-          ))}
-        </aside>
+        <AdsAside position="right" />
       </div>
     </div>
   );
