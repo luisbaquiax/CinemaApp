@@ -154,3 +154,53 @@ export interface FileAdsRequest {
   id?: number;
   file: File;
 }
+
+// reportes admin
+
+export interface AnuncioCompradoResponse {
+  idAnuncio: number;
+  idAnunciante: number;
+  titulo: string;
+  tipoAnuncio: string;
+  periodoAnuncio: string;
+  diasVigencia: number;
+  montoPagado: number;
+  fechaInicio: string;   // LocalDateTime
+  fechaFin: string;      // LocalDateTime
+  activo: boolean;
+}
+
+export interface AnuncioPagadoResponse {
+  idAnuncio: number;
+  titulo: string;
+  tipoAnuncio: string;     // Ej: TEXTO, TEXTO_IMAGEN, VIDEO_TEXTO
+  periodoAnuncio: string;  // Ej: 1_DIA, 3_DIAS, 1_SEMANA, etc.
+  diasVigencia: number;
+  montoPagado: number;
+  fechaInicio: string;
+  fechaFin: string;
+  activo: boolean;
+}
+
+export interface ReporteAnunciosComprados {
+  totalAnuncios: number;
+  totalRecaudado: number;
+  anuncios: AnuncioCompradoResponse[];
+}
+
+export interface ReporteGananciasAnunciante {
+  idAnunciante: number;
+  nombreCompleto: string;
+  email: string;
+  totalAnuncios: number;
+  totalGastado: number;
+  anuncios: AnuncioPagadoResponse[];
+}
+
+export interface ReporteGananciaAnuncianteRequest {
+  inicio?: string;       // LocalDateTime
+  fin?: string;          // LocalDateTime
+  idAnunciante?: number;
+  token: string;
+}
+

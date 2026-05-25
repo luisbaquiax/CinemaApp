@@ -102,6 +102,12 @@ export const cinemaService = {
 	},
 
 
+	getFuncionesActivas: async (): Promise<FuncionResponse[]> => {
+		const { data } = await cinemaPublicClient.get('/v1/cinema/funciones')
+		return data
+	},
+
+
 	//ADMIN SISTEMA
 	// Categorías admin
 	createCategoria: async (payload: CategoriaRequest): Promise<CategoriaResponse> => {
