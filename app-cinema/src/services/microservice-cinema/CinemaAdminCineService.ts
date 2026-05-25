@@ -25,7 +25,7 @@ export const cinemaAdminCineService = {
 	},
 
 	updateSala: async (idSala: number, request: SalaRequest): Promise<MessageSuccess> => {
-		const { data } = await cinemaPrivateClient.put(`/v1/admin-cine/salas/${idSala}`, request)
+		const { data } = await cinemaPrivateClient.put(`/v1/cinema/admin-cine/salas/${idSala}`, request)
 		return data
 	},
 

@@ -54,7 +54,7 @@ const roleNavConfig: Record<string, NavSection[]> = {
     {
       title: 'Analítica',
       items: [
-        { label: 'Reportes', path: '/admin/reportes', icon: <BarChart3 size={16} /> },
+        { label: 'Reportes Sistema', path: '/admin/reportes', icon: <BarChart3 size={16} /> },
       ]
     }
   ],
@@ -85,7 +85,7 @@ const roleNavConfig: Record<string, NavSection[]> = {
     {
       title: 'Analítica',
       items: [
-        { label: 'Reportes', path: '/cine/reportes', icon: <BarChart3 size={16} /> },
+        { label: 'Reportes Cine', path: '/cine/reportes', icon: <BarChart3 size={16} /> },
       ]
     }
   ],
