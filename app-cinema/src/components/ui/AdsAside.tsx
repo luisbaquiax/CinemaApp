@@ -5,10 +5,9 @@ import type { AnuncioResponse } from '../../types/Ads.types'
 
 interface AdsAsideProps {
   position: 'left' | 'right'
-  maxAds?: number
 }
 
-const AdsAside = ({ position, maxAds = 4 }: AdsAsideProps) => {
+const AdsAside = ({ position }: AdsAsideProps) => {
   const { data: anuncios, isLoading, isError } = useQuery<AnuncioResponse[]>({
     queryKey: ['anuncios-activos', position],
     queryFn: adsUserService.anunciosActivos,
@@ -30,11 +29,9 @@ const AdsAside = ({ position, maxAds = 4 }: AdsAsideProps) => {
     )
   }
 
-  const anunciosFiltrados = anuncios.slice(0, maxAds)
-
   return (
     <aside className="flex flex-col gap-3">
-      {anunciosFiltrados.map((ad, index) => (
+      {anuncios.map((ad, index) => (
         <AdCard key={ad.idAnuncio} ad={ad} delay={index * 0.2} />
       ))}
     </aside>
