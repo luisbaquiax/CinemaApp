@@ -204,3 +204,58 @@ export interface ReporteGananciaAnuncianteRequest {
   token: string;
 }
 
+//ultimo reporte admin
+
+export interface BloqueoResponse {
+  idBloqueo: number;
+  dias: number;
+  montoPagado: number;
+  fechaInicio: string;   // LocalDateTime
+  fechaFin: string;      // LocalDateTime
+}
+
+export interface TramoCostoResponse {
+  costoDia: number;
+  desde: string;         // LocalDateTime
+  hasta: string;         // LocalDateTime
+  diasEfectivos: number;
+  costoTramo: number;
+}
+
+export interface CompaniaCostoResponse {
+  idCompania: number;
+  nombreCompania: string;
+  costoTotal: number;
+  tramos: TramoCostoResponse[];
+}
+
+export interface ReporteGananciaRequest {
+  inicio?: string;        // LocalDateTime
+  fin?: string;           // LocalDateTime
+  token: string;
+}
+
+export interface ReporteGanancias {
+  inicio: string;
+  fin: string;
+  totalCostos: number;
+  totalIngresos: number;
+  totalGanancias: number;
+  totalIngresoAnuncios: number;
+  totalIngresoBloqueos: number;
+  cines: ReporteGananciasCine[];
+}
+
+export interface ReporteGananciasCine {
+  idCompania: number;
+  nombreCompania: string;
+  
+  // Costos
+  costoTotal: number;
+  tramos: TramoCostoResponse[];
+  
+  // Ingresos
+  ingresoBloqueos: number;
+  bloqueos: BloqueoResponse[];
+}
+
