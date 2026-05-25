@@ -74,7 +74,7 @@ const ConfirmResetPasswordPage = () => {
         }}>
           {success ? (
             <div className="text-center py-6">
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}></div>
               <h2 style={{
                 fontFamily: "'Bebas Neue', sans-serif",
                 fontSize: '1.4rem', letterSpacing: '.08em', color: '#f1f5f9'

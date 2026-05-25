@@ -59,7 +59,7 @@ const CompaniaAdminsPage = () => {
           color: msg.type === 'ok' ? '#4ade80' : 'var(--accent2)',
           fontSize: '.84rem',
         }}>
-          {msg.type === 'ok' ? '✅' : '⚠️'} {msg.text}
+          {msg.type === 'ok' ? '' : '⚠️'} {msg.text}
         </div>
       )}
 

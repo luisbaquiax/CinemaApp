@@ -3,6 +3,8 @@ import type {
   ReporteAnunciosComprados,
   ReporteGananciaAnuncianteRequest,
   ReporteGananciasAnunciante,
+  ReporteGananciaRequest,
+  ReporteGanancias,
 } from "../../types/Ads.types";
 
 const normalizeLocalDateTime = (value?: string) => {
@@ -45,6 +47,22 @@ export const adsAdminReportesService = {
 
     const { data } = await adsPrivateClient.post(
       "/v1/ads/admin/reportes/ganancias-por-anunciante",
+      safeRequest,
+    );
+    return data;
+  },
+
+  getReporteGanancias: async (
+    request: ReporteGananciaRequest,
+  ): Promise<ReporteGanancias> => {
+    const safeRequest = {
+      ...request,
+      inicio: normalizeLocalDateTime(request.inicio),
+      fin: normalizeLocalDateTime(request.fin),
+    } as ReporteGananciaRequest;
+
+    const { data } = await adsPrivateClient.post(
+      "/v1/ads/admin/reportes/ganancias",
       safeRequest,
     );
     return data;
